@@ -34,6 +34,47 @@ public class FarmerProductImageImpl implements FarmerProductImageService {
     @Autowired
     private HttpSession session;
 
+//    @Override
+//    public FProductImageAddResponse save(FarmerProductImageDto farmerProductImageDto) {
+//        String username = (String) session.getAttribute("userEmail");
+//        String productID = (String) session.getAttribute("productID");
+//
+//        if (username == null || username.isEmpty()) {
+//            return new FProductImageAddResponse("User is not logged in or session expired.", "401", null);
+//        }
+//
+//        Optional<User> userOptional = userRepository.findByUserEmail(username);
+//        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductName(productID);
+//
+//        if (userOptional.isEmpty()) {
+//            return new FProductImageAddResponse("User not found for the given username.", "404", null);
+//        }
+//
+//        if (productOptional.isEmpty()) {
+//            return new FProductImageAddResponse("Product not found for the given product name.", "404", null);
+//        }
+//
+//        User user = userOptional.get();
+//        FarmerProduct farmerProduct = productOptional.get();
+//        Optional<FarmerProductImage> existingProductOptional = fProductImageRepository.findById(farmerProductImageDto.getImageID());
+//
+//        FarmerProductImage farmerProductImage = existingProductOptional.orElse(new FarmerProductImage());
+//        farmerProductImage.setProductImage(farmerProductImageDto.getProductImage());
+//        farmerProductImage.setUser(user);
+//        farmerProductImage.setFarmerProduct(farmerProduct);
+//
+//        try {
+//            FarmerProductImage savedProductImage = fProductImageRepository.save(farmerProductImage);
+//            if (savedProductImage != null) {
+//                return new FProductImageAddResponse("Product Image added successfully.", "200", "1000");
+//            } else {
+//                return new FProductImageAddResponse("Failed to add Product Image.", "400", null);
+//            }
+//        } catch (Exception e) {
+//            return new FProductImageAddResponse("Error: " + e.getMessage(), "500", null);
+//        }
+//    }
+
     @Override
     public FProductImageAddResponse save(FarmerProductImageDto farmerProductImageDto) {
         // Retrieve username from session
@@ -100,45 +141,79 @@ public class FarmerProductImageImpl implements FarmerProductImageService {
         return response;
     }
 
-    public FProductImageGetResponse GetAllFarmerProductImages() {
+//    @Override
+//    public FProductImageGetResponse GetAllFarmerProductImages() {
+//        FProductImageGetResponse response = new FProductImageGetResponse();
+//        try {
+//            List<FarmerProductImage> farmerProductImageList = fProductImageRepository.findAll();
+//
+//            List<FarmerProductImageDto> farmerProductImageDtoList = farmerProductImageList.stream().map(farmerProductImage -> {
+//                FarmerProductImageDto dto = new FarmerProductImageDto();
+//                dto.setImageID(farmerProductImage.getImageID());
+//                dto.setProductImage(farmerProductImage.getProductImage());
+//
+//                UserDto userDto = new UserDto();
+//                userDto.setUserID(farmerProductImage.getUser().getUserID());
+//                userDto.setUserEmail(farmerProductImage.getUser().getUserEmail());
+//                userDto.setFirstName(farmerProductImage.getUser().getFirstName());
+//                userDto.setLastName(farmerProductImage.getUser().getLastName());
+//                userDto.setUserType(String.valueOf(farmerProductImage.getUser().getUserType()));
+//
+//                dto.setUser(userDto);
+//                return dto;
+//            }).collect(Collectors.toList());
+//
+//            response.setFProductImageGetResponse(farmerProductImageDtoList);
+//            response.setStatus("200");
+//            response.setMessage("Product images retrieved successfully.");
+//            response.setResponseCode("1600");
+//
+//        } catch (Exception e) {
+//            response.setStatus("500");
+//            response.setMessage("Error retrieving product images: " + e.getMessage());
+//            response.setResponseCode("1601");
+//        }
+//        return response;
+//    }
+
+    /**
+     * ✅ Newly Implemented Method: Get Product Image by Product ID
+     */
+    @Override
+    public FProductImageGetResponse GetFarmerProductImageFindById(int productID) {
         FProductImageGetResponse response = new FProductImageGetResponse();
         try {
-            // Fetch all user details
-            List<FarmerProductImage> farmerProductImageList = fProductImageRepository.findAll();
+            Optional<FarmerProductImage> productImageOptional = fProductImageRepository.findById(productID);
 
-            // Map UserDetails entities to a simplified DTO without sensitive data
-            List<FarmerProductImageDto> farmerProductImageDtoList = farmerProductImageList.stream()
-                    .map(farmerProductImage -> {
-                        FarmerProductImageDto dto = new FarmerProductImageDto();
-                        dto.setImageID(farmerProductImage.getImageID());
-                        dto.setProductImage(farmerProductImage.getProductImage());
+            if (productImageOptional.isPresent()) {
+                FarmerProductImage productImage = productImageOptional.get();
+                FarmerProductImageDto dto = new FarmerProductImageDto();
+                dto.setImageID(productImage.getImageID());
+                dto.setProductImage(productImage.getProductImage());
 
+                UserDto userDto = new UserDto();
+                userDto.setUserID(productImage.getUser().getUserID());
+                userDto.setUserEmail(productImage.getUser().getUserEmail());
+                userDto.setFirstName(productImage.getUser().getFirstName());
+                userDto.setLastName(productImage.getUser().getLastName());
+                userDto.setUserType(String.valueOf(productImage.getUser().getUserType()));
 
-                        // Map nested user information without credentials
-                        UserDto userDto = new UserDto();
-                        userDto.setUserID(farmerProductImage.getUser().getUserID());
-                        userDto.setUserEmail(farmerProductImage.getUser().getUserEmail());
-                        userDto.setFirstName(farmerProductImage.getUser().getFirstName());
-                        userDto.setLastName(farmerProductImage.getUser().getLastName());
-                        userDto.setUserType(String.valueOf(farmerProductImage.getUser().getUserType()));
+                dto.setUser(userDto);
 
-
-                        dto.setUser(userDto);
-                        return dto;
-                    })
-                    .collect(Collectors.toList());
-
-            response.setFProductImageGetResponse(farmerProductImageDtoList);
-            response.setStatus("200");
-            response.setMessage("Product images retrieved successfully");
-            response.setResponseCode("1600");
-
+                response.setFProductImageGetResponse(List.of(dto));
+                response.setStatus("200");
+                response.setMessage("Product image retrieved successfully.");
+                response.setResponseCode("1602");
+            } else {
+                response.setStatus("404");
+                response.setMessage("Product image not found.");
+                response.setResponseCode("1603");
+            }
         } catch (Exception e) {
             response.setStatus("500");
-            response.setMessage("Error retrieving product Details: " + e.getMessage());
-            response.setResponseCode("1601");
+            response.setMessage("Error retrieving product image: " + e.getMessage());
+            response.setResponseCode("1604");
         }
-
         return response;
     }
 }

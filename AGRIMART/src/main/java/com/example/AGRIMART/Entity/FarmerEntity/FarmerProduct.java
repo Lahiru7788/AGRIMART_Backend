@@ -29,9 +29,6 @@ public class FarmerProduct {
     @Enumerated(EnumType.STRING)
     private FarmerProductDto.ProductCategory productCategory;
 
-    @Column(name = "product_image", columnDefinition = "LONGBLOB")
-    private byte[] productImage;
-
     @Column(name = "price")
     private BigDecimal price;
 

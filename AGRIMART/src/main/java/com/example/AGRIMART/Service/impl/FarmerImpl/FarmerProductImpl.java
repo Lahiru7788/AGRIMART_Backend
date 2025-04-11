@@ -3,6 +3,7 @@ package com.example.AGRIMART.Service.impl.FarmerImpl;
 import com.example.AGRIMART.Dto.FarmerDto.FarmerProductDto;
 import com.example.AGRIMART.Dto.UserDto;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductAddResponse;
+import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductDeleteResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductGetResponse;
 import com.example.AGRIMART.Entity.FarmerEntity.FarmerProduct;
 import com.example.AGRIMART.Entity.User;
@@ -109,7 +110,6 @@ public class FarmerProductImpl implements FarmerProductService {
         FarmerProduct farmerProduct = existingProductOptional.orElse(new FarmerProduct());
         // If product exists, we update the fields; if not, we create a new one
         farmerProduct.setProductName(farmerProductDto.getProductName());
-        farmerProduct.setProductImage(farmerProductDto.getProductImage());
         farmerProduct.setPrice(farmerProductDto.getPrice());
         farmerProduct.setDescription(farmerProductDto.getDescription());
         farmerProduct.setAvailableQuantity(farmerProductDto.getAvailableQuantity());
@@ -179,7 +179,6 @@ public class FarmerProductImpl implements FarmerProductService {
                         FarmerProductDto dto = new FarmerProductDto();
                         dto.setProductID(farmerProduct.getProductID());
                         dto.setProductName(farmerProduct.getProductName());
-                        dto.setProductImage(farmerProduct.getProductImage());
                         dto.setPrice(farmerProduct.getPrice());
                         dto.setAvailableQuantity(farmerProduct.getAvailableQuantity());
                         dto.setMinimumQuantity(farmerProduct.getMinimumQuantity());
@@ -205,6 +204,17 @@ public class FarmerProductImpl implements FarmerProductService {
                         return dto;
                     })
                     .collect(Collectors.toList());
+            for (FarmerProduct farmerProduct : farmerProductList) {
+                if (farmerProduct.getMinimumQuantity() > farmerProduct.getAvailableQuantity()) {
+                    farmerProduct.setQuantityLowered(true);
+                }
+            }
+
+            for (FarmerProduct farmerProduct : farmerProductList) {
+                if (farmerProduct.getAvailableQuantity() == 0 ) {
+                    farmerProduct.setActive(false);
+                }
+            }
 
             response.setFarmerProductGetResponse(farmerProductDtoList);
             response.setStatus("200");
@@ -216,6 +226,35 @@ public class FarmerProductImpl implements FarmerProductService {
             response.setMessage("Error retrieving product Details: " + e.getMessage());
             response.setResponseCode("1601");
         }
+
+        return response;
+    }
+
+    @Override
+    public FarmerProductDeleteResponse DeleteFarmerResponse(int productID) {
+        FarmerProductDeleteResponse response = new FarmerProductDeleteResponse();
+
+        //calculation part
+        FarmerProduct farmerProduct;
+        farmerProduct = farmerProductRepository.findByProductID(productID);
+
+
+
+        try {
+            farmerProduct.setDeleted(true);
+            farmerProductRepository.save(farmerProduct);
+            response.setFarmerProductDeleteResponse(farmerProduct);
+            response.setMessage("product Id : " + productID + " item delete successfully");
+            response.setStatus("200");
+            response.setResponseCode("11000");
+
+        }catch (Exception e){
+            response.setMessage("Error delete allocate item " + e.getMessage());
+            response.setResponseCode("11001");
+            response.setStatus("500");
+
+        }
+
 
         return response;
     }

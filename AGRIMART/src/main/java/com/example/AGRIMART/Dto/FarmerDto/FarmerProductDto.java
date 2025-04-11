@@ -16,7 +16,6 @@ public class FarmerProductDto {
 
     private int productID;
     private String productName;
-    private byte[] productImage;
     private BigDecimal price;
     private double availableQuantity;
     private double minimumQuantity;

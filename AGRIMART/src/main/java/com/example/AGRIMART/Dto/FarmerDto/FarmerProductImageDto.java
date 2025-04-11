@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class FarmerProductImageDto {
 
     private int imageID;
+    private int productID;
     private byte[] productImage;
     private UserDto user;
 }

@@ -5,4 +5,11 @@ import com.example.AGRIMART.Entity.FarmerEntity.FarmerProductImage;
 
 public class FProductImageAddResponse extends Response {
     private FarmerProductImage farmerProductImage;
+
+    public FProductImageAddResponse(String s, String s1, Object o) {
+    }
+
+    public FProductImageAddResponse() {
+
+    }
 }
