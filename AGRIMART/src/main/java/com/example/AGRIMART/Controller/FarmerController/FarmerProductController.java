@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(
+        origins = "http://localhost:3000", // ✅ Set your frontend origin explicitly
+        allowCredentials = "true"          // ✅ Allow sending session/cookies
+)
 @RequestMapping("api/user")
 
 public class FarmerProductController {

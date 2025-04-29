@@ -18,7 +18,10 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(
+        origins = "http://localhost:3000", // ✅ Set your frontend origin explicitly
+        allowCredentials = "true"          // ✅ Allow sending session/cookies
+)
 @RequestMapping("api/user")
 public class FarmerProductImageController {
 

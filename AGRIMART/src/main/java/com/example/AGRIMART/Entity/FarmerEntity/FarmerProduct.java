@@ -1,6 +1,7 @@
 package com.example.AGRIMART.Entity.FarmerEntity;
 
 import com.example.AGRIMART.Dto.FarmerDto.FarmerProductDto;
+import com.example.AGRIMART.Entity.ConsumerEntity.CAddOrderImage;
 import com.example.AGRIMART.Entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -57,9 +60,13 @@ public class FarmerProduct {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private FarmerProductImage farmerProductImage;
+//    @OneToOne(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private FarmerProductImage farmerProductImage;
 
-    @OneToOne(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private FarmerOffer farmerOffer;
+
+    @OneToMany(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FarmerOffer> farmerOffer = new ArrayList<>();
+
+    @OneToMany(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FarmerProductImage> farmerProductImage = new ArrayList<>();
 }

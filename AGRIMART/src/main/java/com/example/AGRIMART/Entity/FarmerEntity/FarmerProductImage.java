@@ -21,7 +21,11 @@ public class FarmerProductImage {
     @Column(name = "product_image", columnDefinition = "LONGBLOB")
     private byte[] productImage;
 
-    @OneToOne
+//    @OneToOne
+//    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+//    private FarmerProduct farmerProduct;
+
+    @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     private FarmerProduct farmerProduct;
 

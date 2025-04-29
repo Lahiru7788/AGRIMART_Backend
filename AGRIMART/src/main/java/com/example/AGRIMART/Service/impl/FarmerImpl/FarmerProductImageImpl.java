@@ -75,6 +75,73 @@ public class FarmerProductImageImpl implements FarmerProductImageService {
 //        }
 //    }
 
+//    @Override
+//    public FProductImageAddResponse save(FarmerProductImageDto farmerProductImageDto) {
+//        // Retrieve username from session
+//        String username = (String) session.getAttribute("userEmail");
+//        String productID = (String) session.getAttribute("productID");
+//
+//        if (username == null || username.isEmpty()) {
+//            FProductImageAddResponse response = new FProductImageAddResponse();
+//            response.setMessage("User is not logged in , Product is not available in the store or session expired.");
+//            response.setStatus("401"); // Unauthorized
+//            return response;
+//        }
+//
+////        if ( null == productID || productID.isEmpty()) {
+////            FProductImageAddResponse response = new FProductImageAddResponse();
+////            response.setMessage("User is not logged in , Product is not available in the store or session expired.");
+////            response.setStatus("401"); // Unauthorized
+////            return response;
+////        }
+//        // Find user by username
+//        Optional<User> userOptional = userRepository.findByUserEmail(username);
+//        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductName(productID);
+//
+//        if (userOptional.isEmpty()) {
+//            FProductImageAddResponse response = new FProductImageAddResponse();
+//            response.setMessage("User not found for the given username.");
+//            return response;
+//        }
+//
+//        if (productOptional.isEmpty()) {
+//            FProductImageAddResponse response = new FProductImageAddResponse();
+//            response.setMessage(" Product not found for the given product name.");
+//            return response;
+//        }
+//
+//        User user = userOptional.get();
+//        FarmerProduct farmerProduct = productOptional.get();
+//        Optional<FarmerProductImage> existingProductOptional = fProductImageRepository.findById(farmerProductImageDto.getProductID());
+//
+//        FarmerProductImage farmerProductImage = existingProductOptional.orElse(new FarmerProductImage());
+//
+//
+//        farmerProductImage.setProductImage(farmerProductImageDto.getProductImage());
+//
+//        farmerProductImage.setUser(user);
+//        farmerProductImage.setFarmerProduct(farmerProduct);
+//
+//        FProductImageAddResponse response = new FProductImageAddResponse();
+//        try {
+//            FarmerProductImage saveProductImage = fProductImageRepository.save(farmerProductImage);
+//            if (saveProductImage != null) {
+//                response.setMessage("Product Image was added successfully.");
+//                response.setStatus("200");
+//                response.setResponseCode("1000");
+//            } else {
+//                response.setMessage("Failed to add Product Image.");
+//                response.setStatus("400");
+//            }
+//        } catch (Exception e) {
+//            response.setMessage("Error: " + e.getMessage());
+//            response.setStatus("500"); // Internal server error
+//        }
+//
+//        return response;
+//    }
+
+
     @Override
     public FProductImageAddResponse save(FarmerProductImageDto farmerProductImageDto) {
         // Retrieve username from session
@@ -83,17 +150,11 @@ public class FarmerProductImageImpl implements FarmerProductImageService {
 
         if (username == null || username.isEmpty()) {
             FProductImageAddResponse response = new FProductImageAddResponse();
-            response.setMessage("User is not logged in , Product is not available in the store or session expired.");
+            response.setMessage("User is not logged in, Product is not available in the store or session expired.");
             response.setStatus("401"); // Unauthorized
             return response;
         }
 
-//        if ( null == productID || productID.isEmpty()) {
-//            FProductImageAddResponse response = new FProductImageAddResponse();
-//            response.setMessage("User is not logged in , Product is not available in the store or session expired.");
-//            response.setStatus("401"); // Unauthorized
-//            return response;
-//        }
         // Find user by username
         Optional<User> userOptional = userRepository.findByUserEmail(username);
         Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductName(productID);
@@ -101,36 +162,49 @@ public class FarmerProductImageImpl implements FarmerProductImageService {
         if (userOptional.isEmpty()) {
             FProductImageAddResponse response = new FProductImageAddResponse();
             response.setMessage("User not found for the given username.");
+            response.setStatus("404"); // Not Found
             return response;
         }
 
         if (productOptional.isEmpty()) {
             FProductImageAddResponse response = new FProductImageAddResponse();
-            response.setMessage(" Product not found for the given product name.");
+            response.setMessage("Product not found for the given product name.");
+            response.setStatus("404"); // Not Found
             return response;
         }
 
         User user = userOptional.get();
         FarmerProduct farmerProduct = productOptional.get();
-        Optional<FarmerProductImage> existingProductOptional = fProductImageRepository.findById(farmerProductImageDto.getImageID());
 
-        FarmerProductImage farmerProductImage = existingProductOptional.orElse(new FarmerProductImage());
+        // Check if there's an existing image entry for this product
+        Optional<FarmerProductImage> existingImageOptional = fProductImageRepository.findByFarmerProduct_ProductID(farmerProduct.getProductID());
 
+        FarmerProductImage farmerProductImage;
+        String actionPerformed;
 
-        farmerProductImage.setProductImage(farmerProductImageDto.getProductImage());
-
-        farmerProductImage.setUser(user);
-        farmerProductImage.setFarmerProduct(farmerProduct);
+        if (existingImageOptional.isPresent()) {
+            // Update existing image
+            farmerProductImage = existingImageOptional.get();
+            farmerProductImage.setProductImage(farmerProductImageDto.getProductImage());
+            actionPerformed = "updated";
+        } else {
+            // Create new image entry
+            farmerProductImage = new FarmerProductImage();
+            farmerProductImage.setProductImage(farmerProductImageDto.getProductImage());
+            farmerProductImage.setUser(user);
+            farmerProductImage.setFarmerProduct(farmerProduct);
+            actionPerformed = "added";
+        }
 
         FProductImageAddResponse response = new FProductImageAddResponse();
         try {
-            FarmerProductImage saveProductImage = fProductImageRepository.save(farmerProductImage);
-            if (saveProductImage != null) {
-                response.setMessage("Product Image was added successfully.");
+            FarmerProductImage savedProductImage = fProductImageRepository.save(farmerProductImage);
+            if (savedProductImage != null) {
+                response.setMessage("Product Image was " + actionPerformed + " successfully.");
                 response.setStatus("200");
                 response.setResponseCode("1000");
             } else {
-                response.setMessage("Failed to add Product Image.");
+                response.setMessage("Failed to " + actionPerformed + " Product Image.");
                 response.setStatus("400");
             }
         } catch (Exception e) {

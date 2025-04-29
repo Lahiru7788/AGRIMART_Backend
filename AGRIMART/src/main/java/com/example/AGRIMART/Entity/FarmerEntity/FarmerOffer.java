@@ -1,5 +1,6 @@
 package com.example.AGRIMART.Entity.FarmerEntity;
 
+import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerAddOrder;
 import com.example.AGRIMART.Entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -42,7 +43,7 @@ public class FarmerOffer {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     private FarmerProduct farmerProduct;
 

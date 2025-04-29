@@ -4,6 +4,7 @@ import com.example.AGRIMART.Dto.CredentialDto;
 import com.example.AGRIMART.Dto.LoginDto;
 import com.example.AGRIMART.Dto.UserDto;
 import com.example.AGRIMART.Dto.response.LoginResponse;
+import com.example.AGRIMART.Dto.response.LogoutResponse;
 import com.example.AGRIMART.Entity.Credentials;
 import com.example.AGRIMART.Repository.CredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,5 +71,14 @@ public class LoginService {
         return loginResponse;
 
 
+    }
+
+    public LogoutResponse logoutUser() {
+        LogoutResponse logoutResponse = new LogoutResponse();
+        logoutResponse.setStatus("200");
+        logoutResponse.setMessage("Logout successful");
+        logoutResponse.setCode("8002");
+
+        return logoutResponse;
     }
 }
