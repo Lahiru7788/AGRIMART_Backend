@@ -4,7 +4,6 @@ import com.example.AGRIMART.Dto.FarmerDto.FarmerOfferDto;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerOfferAddResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerOfferDeleteResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerOfferGetResponse;
-import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductDeleteResponse;
 import com.example.AGRIMART.Service.FarmerService.FarmerOfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

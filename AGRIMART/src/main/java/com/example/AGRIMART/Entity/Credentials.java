@@ -22,9 +22,8 @@ public class Credentials {
     @Column(name = "user_password", nullable = false)
     private String userPassword;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
-
 
 }

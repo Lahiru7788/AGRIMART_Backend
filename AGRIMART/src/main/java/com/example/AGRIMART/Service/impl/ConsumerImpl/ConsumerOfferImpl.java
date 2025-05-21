@@ -1,12 +1,15 @@
 package com.example.AGRIMART.Service.impl.ConsumerImpl;
 
 import com.example.AGRIMART.Dto.ConsumerDto.ConsumerOfferDto;
+import com.example.AGRIMART.Dto.FarmerDto.FarmerOfferDto;
 import com.example.AGRIMART.Dto.UserDto;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerOfferAddResponse;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerOfferGetResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerOfferAddResponse;
+import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerOfferGetResponse;
 import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerAddOrder;
 import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerOffer;
+import com.example.AGRIMART.Entity.FarmerEntity.FarmerOffer;
 import com.example.AGRIMART.Entity.User;
 import com.example.AGRIMART.Repository.ConsumerRepository.ConsumerAddOrderRepository;
 import com.example.AGRIMART.Repository.ConsumerRepository.ConsumerOfferRepository;
@@ -65,9 +68,20 @@ public class ConsumerOfferImpl implements ConsumerOfferService {
 
         User user = userOptional.get();
         ConsumerAddOrder consumerAddOrder = orderOptional.get();
-        Optional<ConsumerOffer> existingOrderOptional = consumerOfferRepository.findById(consumerOfferDto.getOfferID());
+        List<ConsumerOffer> existingOffers = consumerOfferRepository.findByConsumerAddOrder_OrderID(consumerAddOrder.getOrderID());
 
-        ConsumerOffer consumerOffer = existingOrderOptional.orElse(new ConsumerOffer());
+        ConsumerOffer consumerOffer;
+        String actionPerformed;
+
+        if (!existingOffers.isEmpty()) {
+            consumerOffer = existingOffers.get(0);
+            actionPerformed = "updated";
+        } else {
+            consumerOffer = new ConsumerOffer();
+            consumerOffer.setUser(user);
+            consumerOffer.setConsumerAddOrder(consumerAddOrder);
+            actionPerformed = "added";
+        }
         // If product exists, we update the fields; if not, we create a new one
         consumerOffer.setOfferName(consumerOfferDto.getOfferName());
         consumerOffer.setOfferDescription(consumerOfferDto.getOfferDescription());
@@ -102,13 +116,63 @@ public class ConsumerOfferImpl implements ConsumerOfferService {
         return response;
     }
 
-    public ConsumerOfferGetResponse GetAllConsumerOffers() {
+//    public ConsumerOfferGetResponse GetAllConsumerOffers() {
+//        ConsumerOfferGetResponse response = new ConsumerOfferGetResponse();
+//        try {
+//            // Fetch all user details
+//            List<ConsumerOffer> consumerOfferList = consumerOfferRepository.findAll();
+//
+//            // Map UserDetails entities to a simplified DTO without sensitive data
+//            List<ConsumerOfferDto> consumerOfferDtoList = consumerOfferList.stream()
+//                    .map(consumerOffer -> {
+//                        ConsumerOfferDto dto = new ConsumerOfferDto();
+//                        dto.setOfferID(consumerOffer.getOfferID());
+//                        dto.setOfferName(consumerOffer.getOfferName());
+//                        dto.setOfferDescription(consumerOffer.getOfferDescription());
+//                        dto.setNewPrice(consumerOffer.getNewPrice());
+//                        dto.setActive(consumerOffer.isActive());
+//
+//                        // Map nested user information without credentials
+//                        UserDto userDto = new UserDto();
+//                        userDto.setUserID(consumerOffer.getUser().getUserID());
+//                        userDto.setUserEmail(consumerOffer.getUser().getUserEmail());
+//                        userDto.setFirstName(consumerOffer.getUser().getFirstName());
+//                        userDto.setLastName(consumerOffer.getUser().getLastName());
+//                        userDto.setUserType(String.valueOf(consumerOffer.getUser().getUserType()));
+//
+//
+//                        dto.setUser(userDto);
+//                        return dto;
+//                    })
+//                    .collect(Collectors.toList());
+//
+//            response.setConsumerOfferGetResponse(consumerOfferDtoList);
+//            response.setStatus("200");
+//            response.setMessage("Product Details retrieved successfully");
+//            response.setResponseCode("1600");
+//
+//        } catch (Exception e) {
+//            response.setStatus("500");
+//            response.setMessage("Error retrieving product Details: " + e.getMessage());
+//            response.setResponseCode("1601");
+//        }
+//
+//        return response;
+//    }
+
+    public ConsumerOfferGetResponse getConsumerAddOffersByOrderId(int orderID) {
         ConsumerOfferGetResponse response = new ConsumerOfferGetResponse();
         try {
-            // Fetch all user details
-            List<ConsumerOffer> consumerOfferList = consumerOfferRepository.findAll();
+            // Use the correct repository method that follows the entity relationship
+            List<ConsumerOffer> consumerOfferList = consumerOfferRepository.findByConsumerAddOrder_OrderID(orderID);
 
-            // Map UserDetails entities to a simplified DTO without sensitive data
+            if (consumerOfferList.isEmpty()) {
+                response.setStatus("404");
+                response.setMessage("No offers found for order ID: " + orderID);
+                response.setResponseCode("1602");
+                return response;
+            }
+            // Map FarmerOffer entities to DTOs
             List<ConsumerOfferDto> consumerOfferDtoList = consumerOfferList.stream()
                     .map(consumerOffer -> {
                         ConsumerOfferDto dto = new ConsumerOfferDto();
@@ -126,7 +190,6 @@ public class ConsumerOfferImpl implements ConsumerOfferService {
                         userDto.setLastName(consumerOffer.getUser().getLastName());
                         userDto.setUserType(String.valueOf(consumerOffer.getUser().getUserType()));
 
-
                         dto.setUser(userDto);
                         return dto;
                     })
@@ -134,12 +197,12 @@ public class ConsumerOfferImpl implements ConsumerOfferService {
 
             response.setConsumerOfferGetResponse(consumerOfferDtoList);
             response.setStatus("200");
-            response.setMessage("Product Details retrieved successfully");
+            response.setMessage("Product offers retrieved successfully");
             response.setResponseCode("1600");
 
         } catch (Exception e) {
             response.setStatus("500");
-            response.setMessage("Error retrieving product Details: " + e.getMessage());
+            response.setMessage("Error retrieving product offers: " + e.getMessage());
             response.setResponseCode("1601");
         }
 

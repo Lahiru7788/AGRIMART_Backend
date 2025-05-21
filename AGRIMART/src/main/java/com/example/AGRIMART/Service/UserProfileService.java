@@ -7,5 +7,6 @@ import com.example.AGRIMART.Dto.response.UserProfileGetResponse;
 
 public interface UserProfileService {
     UserProfileAddResponse save(UserProfileDto userProfileDto);
-    UserProfileGetResponse GetAllUserProfiles();
+//    UserProfileGetResponse GetAllUserProfiles();
+UserProfileGetResponse GetUserProfileFindById(int userID);
 }

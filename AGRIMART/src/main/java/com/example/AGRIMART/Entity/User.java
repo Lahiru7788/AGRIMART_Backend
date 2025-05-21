@@ -1,15 +1,13 @@
 package com.example.AGRIMART.Entity;
 
 import com.example.AGRIMART.Dto.UserDto;
-import com.example.AGRIMART.Entity.ConsumerEntity.CAddOrderImage;
-import com.example.AGRIMART.Entity.ConsumerEntity.CPreOrderImage;
-import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerAddOrder;
-import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerPreOrder;
+import com.example.AGRIMART.Entity.ConsumerEntity.*;
 import com.example.AGRIMART.Entity.FarmerEntity.FarmerOffer;
 import com.example.AGRIMART.Entity.FarmerEntity.FarmerProduct;
 import com.example.AGRIMART.Entity.FarmerEntity.FarmerProductImage;
-import com.example.AGRIMART.Entity.SeedsAndFertilizerEntity.SandFProductImage;
-import com.example.AGRIMART.Entity.SeedsAndFertilizerEntity.SeedsAndFertilizerProduct;
+import com.example.AGRIMART.Entity.SFEntity.SFProductImage;
+import com.example.AGRIMART.Entity.SFEntity.SFProduct;
+import com.example.AGRIMART.Entity.SupermarketEntity.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,29 +44,29 @@ public class User {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Credentials credentials;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Credentials> credentials = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UserDetails userDetails;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserDetails> userDetails = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UserProfile userProfile;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserProfile> userProfile = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UserCategories userCategories;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserCategories> userCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FarmerProduct> farmerProducts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SeedsAndFertilizerProduct> seedsAndFertilizerProducts = new ArrayList<>();
+    private List<SFProduct> SFProducts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FarmerProductImage> farmerProductImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SandFProductImage> sandFProductImages = new ArrayList<>();
+    private List<SFProductImage> SFProductImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FarmerOffer> farmerOffers = new ArrayList<>();
@@ -84,4 +82,35 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CPreOrderImage> cPreOrderImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SupermarketOffer> supermarketOffers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SupermarketAddOrder> supermarketAddOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SAddOrderImage> sAddOrderImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ConsumerOrder> consumerOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ConsumerSeedsOrder> consumerSeedsOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SupermarketOrder> supermarketOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SupermarketSeedsOrder> supermarketSeedsOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ConsumerSeedsOrderImage> consumerSeedsOrderImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SupermarketSeedsOrderImage> supermarketSeedsOrderImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SupermarketOrderImage> supermarketOrderImages = new ArrayList<>();
+
 }

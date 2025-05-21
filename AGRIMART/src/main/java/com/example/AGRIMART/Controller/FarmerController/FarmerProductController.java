@@ -1,6 +1,7 @@
 package com.example.AGRIMART.Controller.FarmerController;
 
 import com.example.AGRIMART.Dto.FarmerDto.FarmerProductDto;
+import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerOfferGetResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductAddResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductDeleteResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductGetResponse;
@@ -37,6 +38,11 @@ public class FarmerProductController {
     public FarmerProductGetResponse getAllFarmerProducts() {
         return farmerProductService.GetAllFarmerProducts();
 
+    }
+
+    @GetMapping("/viewFarmerProducts/{userID}")
+    public FarmerProductGetResponse findByUser_UserID(@PathVariable("userID") int userID) {
+        return farmerProductService.getFarmerProductByUserId(userID);
     }
 
     @PutMapping(value = "/farmer-product/{productID}/delete")

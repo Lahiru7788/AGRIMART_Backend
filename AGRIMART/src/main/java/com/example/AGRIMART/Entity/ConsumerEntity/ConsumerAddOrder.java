@@ -62,4 +62,5 @@ public class ConsumerAddOrder {
 
     @OneToMany(mappedBy = "consumerAddOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConsumerOffer> consumerOffer = new ArrayList<>();
+
 }

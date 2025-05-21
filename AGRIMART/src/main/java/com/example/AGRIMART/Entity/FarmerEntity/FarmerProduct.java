@@ -1,7 +1,8 @@
 package com.example.AGRIMART.Entity.FarmerEntity;
 
 import com.example.AGRIMART.Dto.FarmerDto.FarmerProductDto;
-import com.example.AGRIMART.Entity.ConsumerEntity.CAddOrderImage;
+import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerOrder;
+import com.example.AGRIMART.Entity.SupermarketEntity.SupermarketOrder;
 import com.example.AGRIMART.Entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -66,6 +67,12 @@ public class FarmerProduct {
 
     @OneToMany(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FarmerOffer> farmerOffer = new ArrayList<>();
+
+    @OneToMany(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ConsumerOrder> consumerOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SupermarketOrder> supermarketOrders = new ArrayList<>();
 
     @OneToMany(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FarmerProductImage> farmerProductImage = new ArrayList<>();

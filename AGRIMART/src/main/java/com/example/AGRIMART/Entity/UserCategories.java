@@ -42,7 +42,7 @@ public class UserCategories {
     @Enumerated(EnumType.STRING)
     private UserCategoriesDto.CategoryFive categoryFive;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 

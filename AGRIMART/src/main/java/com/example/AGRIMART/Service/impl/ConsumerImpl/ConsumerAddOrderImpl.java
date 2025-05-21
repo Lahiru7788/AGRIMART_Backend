@@ -4,8 +4,10 @@ import com.example.AGRIMART.Dto.ConsumerDto.ConsumerAddOrderDto;
 import com.example.AGRIMART.Dto.FarmerDto.FarmerProductDto;
 import com.example.AGRIMART.Dto.UserDto;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderAddResponse;
+import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderDeleteResponse;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderGetResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductAddResponse;
+import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductDeleteResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductGetResponse;
 import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerAddOrder;
 import com.example.AGRIMART.Entity.FarmerEntity.FarmerProduct;
@@ -111,7 +113,18 @@ public class ConsumerAddOrderImpl implements ConsumerAddOrderService {
         User user = userOptional.get();
         Optional<ConsumerAddOrder> existingProductOptional = consumerAddOrderRepository.findById(consumerAddOrderDto.getOrderID());
 
-        ConsumerAddOrder consumerAddOrder = existingProductOptional.orElse(new ConsumerAddOrder());
+        ConsumerAddOrder consumerAddOrder;
+        String actionPerformed;
+
+        if (!existingProductOptional.isEmpty()) {
+            consumerAddOrder = existingProductOptional.get();
+            actionPerformed = "updated";
+        } else {
+            consumerAddOrder = new ConsumerAddOrder();
+            consumerAddOrder.setUser(user);
+
+            actionPerformed = "added";
+        }
         // If product exists, we update the fields; if not, we create a new one
         consumerAddOrder.setProductName(consumerAddOrderDto.getProductName());
         consumerAddOrder.setPrice(consumerAddOrderDto.getPrice());
@@ -218,6 +231,91 @@ public class ConsumerAddOrderImpl implements ConsumerAddOrderService {
             response.setMessage("Error retrieving Order Details: " + e.getMessage());
             response.setResponseCode("1601");
         }
+
+        return response;
+    }
+
+    public ConsumerAddOrderGetResponse getConsumerAddOrderByUserId(int userID) {
+        ConsumerAddOrderGetResponse response = new ConsumerAddOrderGetResponse();
+        try {
+            // Use the correct repository method that follows the entity relationship
+            List<ConsumerAddOrder> consumerAddOrderList = consumerAddOrderRepository.findByUser_UserID(userID);
+
+            if (consumerAddOrderList.isEmpty()) {
+                response.setStatus("404");
+                response.setMessage("No orders found for user ID: " + userID);
+                response.setResponseCode("1602");
+                return response;
+            }
+            // Map FarmerOffer entities to DTOs
+            List<ConsumerAddOrderDto> consumerAddOrderDtoList = consumerAddOrderList.stream()
+                    .map(consumerAddOrder -> {
+                        ConsumerAddOrderDto dto = new ConsumerAddOrderDto();
+                        dto.setOrderID(consumerAddOrder.getOrderID());
+                        dto.setProductName(consumerAddOrder.getProductName());
+                        dto.setPrice(consumerAddOrder.getPrice());
+                        dto.setRequiredQuantity(consumerAddOrder.getRequiredQuantity());
+                        dto.setRequiredTime(consumerAddOrder.getRequiredTime());
+                        dto.setAddedDate(consumerAddOrder.getAddedDate());
+                        dto.setDescription(consumerAddOrder.getDescription());
+                        dto.setActive(consumerAddOrder.isActive());
+                        dto.setConfirmed(consumerAddOrder.isConfirmed());
+                        dto.setProductCategory(String.valueOf(consumerAddOrder.getProductCategory()));
+
+
+
+                        // Map nested user information without credentials
+                        UserDto userDto = new UserDto();
+                        userDto.setUserID(consumerAddOrder.getUser().getUserID());
+                        userDto.setUserEmail(consumerAddOrder.getUser().getUserEmail());
+                        userDto.setFirstName(consumerAddOrder.getUser().getFirstName());
+                        userDto.setLastName(consumerAddOrder.getUser().getLastName());
+                        userDto.setUserType(String.valueOf(consumerAddOrder.getUser().getUserType()));
+                        dto.setUser(userDto);
+
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+
+            response.setConsumerAddOrderGetResponse(consumerAddOrderDtoList);
+            response.setStatus("200");
+            response.setMessage("Order details retrieved successfully");
+            response.setResponseCode("1600");
+
+        } catch (Exception e) {
+            response.setStatus("500");
+            response.setMessage("Error retrieving Order details: " + e.getMessage());
+            response.setResponseCode("1601");
+        }
+
+        return response;
+    }
+
+    @Override
+    public ConsumerAddOrderDeleteResponse DeleteConsumerResponse(int orderID) {
+        ConsumerAddOrderDeleteResponse response = new ConsumerAddOrderDeleteResponse();
+
+        //calculation part
+        ConsumerAddOrder consumerAddOrder;
+        consumerAddOrder = consumerAddOrderRepository.findByOrderID(orderID);
+
+
+
+        try {
+            consumerAddOrder.setActive(false);
+            consumerAddOrderRepository.save(consumerAddOrder);
+            response.setConsumerAddOrderDeleteResponse(consumerAddOrder);
+            response.setMessage("product Id : " + orderID + " item delete successfully");
+            response.setStatus("200");
+            response.setResponseCode("11000");
+
+        }catch (Exception e){
+            response.setMessage("Error delete allocate item " + e.getMessage());
+            response.setResponseCode("11001");
+            response.setStatus("500");
+
+        }
+
 
         return response;
     }

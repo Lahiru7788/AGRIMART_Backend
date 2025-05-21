@@ -50,27 +50,44 @@ public class UserDetailsImpl implements UserDetailsService {
             response.setMessage("User not found for the given username.");
             return response;
         }
-
         User user = userOptional.get();
-        UserDetails userDetails = new UserDetails();
-        userDetails.setAddress(userDetailsDto.getAddress());
-        userDetails.setUserFirstName(userDetailsDto.getUserFirstName());
-        userDetails.setUserLastName(userDetailsDto.getUserLastName());
-        userDetails.setCity(userDetailsDto.getCity());
-        userDetails.setCountry(userDetailsDto.getCountry());
-        userDetails.setPostalCode(userDetailsDto.getPostalCode());
-        userDetails.setMobile(userDetailsDto.getMobile());
-        userDetails.setUser(user);
+        List<UserDetails> existingUserDetailsList = userDetailsRepository.findByUser_UserID(user.getUserID());
 
+        UserDetails userDetails;
+        String actionPerformed;
+
+        if (!existingUserDetailsList.isEmpty()) {
+            // Update existing user details (assuming we take the first one if multiple exist)
+            userDetails = existingUserDetailsList.get(0);
+            userDetails.setAddress(userDetailsDto.getAddress());
+            userDetails.setUserFirstName(userDetailsDto.getUserFirstName());
+            userDetails.setUserLastName(userDetailsDto.getUserLastName());
+            userDetails.setCity(userDetailsDto.getCity());
+            userDetails.setCountry(userDetailsDto.getCountry());
+            userDetails.setPostalCode(userDetailsDto.getPostalCode());
+            userDetails.setMobile(userDetailsDto.getMobile());
+            actionPerformed = "updated";
+        } else {
+            userDetails = new UserDetails();
+            userDetails.setAddress(userDetailsDto.getAddress());
+            userDetails.setUserFirstName(userDetailsDto.getUserFirstName());
+            userDetails.setUserLastName(userDetailsDto.getUserLastName());
+            userDetails.setCity(userDetailsDto.getCity());
+            userDetails.setCountry(userDetailsDto.getCountry());
+            userDetails.setPostalCode(userDetailsDto.getPostalCode());
+            userDetails.setMobile(userDetailsDto.getMobile());
+            userDetails.setUser(user);
+            actionPerformed = "added";
+        }
         UserDetailsAddResponse response = new UserDetailsAddResponse();
         try {
             UserDetails saveUserDetails = userDetailsRepository.save(userDetails);
             if (saveUserDetails != null) {
-                response.setMessage("Your details were added successfully.");
+                response.setMessage("Your details were " + actionPerformed + " successfully.");
                 response.setStatus("200");
                 response.setResponseCode("1000");
             } else {
-                response.setMessage("Failed to add user details.");
+                response.setMessage("Failed to " + actionPerformed + " user details.");
                 response.setStatus("400");
             }
         } catch (Exception e) {
@@ -101,52 +118,104 @@ public class UserDetailsImpl implements UserDetailsService {
 //
 //        return response;
 //    }
-public UserDetailsGetResponse GetAllUserDetails() {
-    UserDetailsGetResponse response = new UserDetailsGetResponse();
-    try {
-        // Fetch all user details
-        List<UserDetails> userDetailsList = userDetailsRepository.findAll();
+//public UserDetailsGetResponse GetAllUserDetails() {
+//    UserDetailsGetResponse response = new UserDetailsGetResponse();
+//    try {
+//        // Fetch all user details
+//        List<UserDetails> userDetailsList = userDetailsRepository.findAll();
+//
+//        // Map UserDetails entities to a simplified DTO without sensitive data
+//        List<UserDetailsDto> userDetailsDtoList = userDetailsList.stream()
+//                .map(userDetails -> {
+//                    UserDetailsDto dto = new UserDetailsDto();
+//                    dto.setUserDetailsID(userDetails.getUserDetailsID());
+//                    dto.setUserFirstName(userDetails.getUserFirstName());
+//                    dto.setUserLastName(userDetails.getUserLastName());
+//                    dto.setCity(userDetails.getCity());
+//                    dto.setCountry(userDetails.getCountry());
+//                    dto.setPostalCode(userDetails.getPostalCode());
+//                    dto.setMobile(userDetails.getMobile());
+//                    dto.setAddress(userDetails.getAddress());
+//
+//                    // Map nested user information without credentials
+//                    UserDto userDto = new UserDto();
+//                    userDto.setUserID(userDetails.getUser().getUserID());
+//                    userDto.setUserEmail(userDetails.getUser().getUserEmail());
+//                    userDto.setFirstName(userDetails.getUser().getFirstName());
+//                    userDto.setLastName(userDetails.getUser().getLastName());
+//                    userDto.setUserType(String.valueOf(userDetails.getUser().getUserType()));
+//
+//
+//
+//                    dto.setUser(userDto);
+//                    return dto;
+//                })
+//                .collect(Collectors.toList());
+//
+//        response.setUserDetailsGetResponse(userDetailsDtoList);
+//        response.setStatus("200");
+//        response.setMessage("User Details retrieved successfully");
+//        response.setResponseCode("1600");
+//
+//    } catch (Exception e) {
+//        response.setStatus("500");
+//        response.setMessage("Error retrieving User Details: " + e.getMessage());
+//        response.setResponseCode("1601");
+//    }
 
-        // Map UserDetails entities to a simplified DTO without sensitive data
-        List<UserDetailsDto> userDetailsDtoList = userDetailsList.stream()
-                .map(userDetails -> {
-                    UserDetailsDto dto = new UserDetailsDto();
-                    dto.setUserDetailsID(userDetails.getUserDetailsID());
-                    dto.setUserFirstName(userDetails.getUserFirstName());
-                    dto.setUserLastName(userDetails.getUserLastName());
-                    dto.setCity(userDetails.getCity());
-                    dto.setCountry(userDetails.getCountry());
-                    dto.setPostalCode(userDetails.getPostalCode());
-                    dto.setMobile(userDetails.getMobile());
-                    dto.setAddress(userDetails.getAddress());
+//    return response;
+//}
 
-                    // Map nested user information without credentials
-                    UserDto userDto = new UserDto();
-                    userDto.setUserID(userDetails.getUser().getUserID());
-                    userDto.setUserEmail(userDetails.getUser().getUserEmail());
-                    userDto.setFirstName(userDetails.getUser().getFirstName());
-                    userDto.setLastName(userDetails.getUser().getLastName());
-                    userDto.setUserType(String.valueOf(userDetails.getUser().getUserType()));
+    public UserDetailsGetResponse getUserDetailsByUserID(int userID) {
+        UserDetailsGetResponse response = new UserDetailsGetResponse();
+        try {
+            // Use the correct repository method that follows the entity relationship
+            List<UserDetails> userDetailsList = userDetailsRepository.findByUser_UserID(userID);
 
+            if (userDetailsList.isEmpty()) {
+                response.setStatus("404");
+                response.setMessage("No user details found: " + userID);
+                response.setResponseCode("1602");
+                return response;
+            }
+            // Map FarmerOffer entities to DTOs
+            List<UserDetailsDto> userDetailsDtoList = userDetailsList.stream()
+                    .map(userDetails -> {
+                        UserDetailsDto dto = new UserDetailsDto();
+                        dto.setUserDetailsID(userDetails.getUserDetailsID());
+                        dto.setUserFirstName(userDetails.getUserFirstName());
+                        dto.setUserLastName(userDetails.getUserLastName());
+                        dto.setCity(userDetails.getCity());
+                        dto.setCountry(userDetails.getCountry());
+                        dto.setPostalCode(userDetails.getPostalCode());
+                        dto.setMobile(userDetails.getMobile());
+                        dto.setAddress(userDetails.getAddress());
 
+                        // Map nested user information without credentials
+                        UserDto userDto = new UserDto();
+                        userDto.setUserID(userDetails.getUser().getUserID());
+                        userDto.setUserEmail(userDetails.getUser().getUserEmail());
+                        userDto.setFirstName(userDetails.getUser().getFirstName());
+                        userDto.setLastName(userDetails.getUser().getLastName());
+                        userDto.setUserType(String.valueOf(userDetails.getUser().getUserType()));
 
-                    dto.setUser(userDto);
-                    return dto;
-                })
-                .collect(Collectors.toList());
+                        dto.setUser(userDto);
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
 
-        response.setUserDetailsGetResponse(userDetailsDtoList);
-        response.setStatus("200");
-        response.setMessage("User Details retrieved successfully");
-        response.setResponseCode("1600");
+            response.setUserDetailsGetResponse(userDetailsDtoList);
+            response.setStatus("200");
+            response.setMessage("User Details retrieved successfully");
+            response.setResponseCode("1600");
 
-    } catch (Exception e) {
-        response.setStatus("500");
-        response.setMessage("Error retrieving User Details: " + e.getMessage());
-        response.setResponseCode("1601");
+        } catch (Exception e) {
+            response.setStatus("500");
+            response.setMessage("Error retrieving user details: " + e.getMessage());
+            response.setResponseCode("1601");
+        }
+
+        return response;
     }
-
-    return response;
-}
 
 }

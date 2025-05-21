@@ -9,6 +9,7 @@ import com.example.AGRIMART.Dto.response.UserDetailsAddResponse;
 import com.example.AGRIMART.Dto.response.UserDetailsGetResponse;
 import com.example.AGRIMART.Dto.response.UserProfileAddResponse;
 import com.example.AGRIMART.Dto.response.UserProfileGetResponse;
+import com.example.AGRIMART.Entity.FarmerEntity.FarmerProduct;
 import com.example.AGRIMART.Entity.FarmerEntity.FarmerProductImage;
 import com.example.AGRIMART.Entity.User;
 import com.example.AGRIMART.Entity.UserDetails;
@@ -60,12 +61,24 @@ public class UserProfileImpl implements UserProfileService {
             }
 
             User user = userOptional.get();
-            UserProfile userProfile = new UserProfile();
+            // Check if there's an existing image entry for this product
+            Optional<UserProfile> existingImageOptional = userProfileRepository.findByUser_UserID(user.getUserID());
+
+            UserProfile userProfile;
+            String actionPerformed;
+
+            if (existingImageOptional.isPresent()) {
+                // Update existing image
+                userProfile = existingImageOptional.get();
+                userProfile.setProfilePicture(userProfileDto.getProfilePicture());
+                actionPerformed = "updated";
+            } else {
+            userProfile = new UserProfile();
             userProfile.setProfilePicture(userProfileDto.getProfilePicture());
-            userProfile.setCoverPicture(userProfileDto.getCoverPicture());
 
             userProfile.setUser(user);
-
+            actionPerformed = "added";
+            }
             UserProfileAddResponse response = new UserProfileAddResponse();
             try {
                 UserProfile saveUserProfile = userProfileRepository.save(userProfile);
@@ -86,46 +99,84 @@ public class UserProfileImpl implements UserProfileService {
         }
 
 
-    public UserProfileGetResponse GetAllUserProfiles() {
+//    public UserProfileGetResponse GetAllUserProfiles() {
+//        UserProfileGetResponse response = new UserProfileGetResponse();
+//        try {
+//            // Fetch all user details
+//            List<UserProfile> userProfileList = userProfileRepository.findAll();
+//
+//            // Map UserDetails entities to a simplified DTO without sensitive data
+//            List<UserProfileDto> userProfileDtoList = userProfileList.stream()
+//                    .map(userProfile -> {
+//                        UserProfileDto dto = new UserProfileDto();
+//                        dto.setProfileID(userProfile.getProfileID());
+//                        dto.setProfilePicture(userProfile.getProfilePicture());
+//
+//
+//
+//                        // Map nested user information without credentials
+//                        UserDto userDto = new UserDto();
+//                        userDto.setUserID(userProfile.getUser().getUserID());
+//                        userDto.setUserEmail(userProfile.getUser().getUserEmail());
+//                        userDto.setFirstName(userProfile.getUser().getFirstName());
+//                        userDto.setLastName(userProfile.getUser().getLastName());
+//                        userDto.setUserType(String.valueOf(userProfile.getUser().getUserType()));
+//
+//
+//                        dto.setUser(userDto);
+//                        return dto;
+//                    })
+//                    .collect(Collectors.toList());
+//
+//            response.setUserProfileGetResponse(userProfileDtoList);
+//            response.setStatus("200");
+//            response.setMessage("Profile images retrieved successfully");
+//            response.setResponseCode("1600");
+//
+//        } catch (Exception e) {
+//            response.setStatus("500");
+//            response.setMessage("Error retrieving product Details: " + e.getMessage());
+//            response.setResponseCode("1601");
+//        }
+//
+//        return response;
+//    }
+
+    @Override
+    public UserProfileGetResponse GetUserProfileFindById(int userID) {
         UserProfileGetResponse response = new UserProfileGetResponse();
         try {
-            // Fetch all user details
-            List<UserProfile> userProfileList = userProfileRepository.findAll();
+            Optional<UserProfile> userProfileOptional = userProfileRepository.findById(userID);
 
-            // Map UserDetails entities to a simplified DTO without sensitive data
-            List<UserProfileDto> userProfileDtoList = userProfileList.stream()
-                    .map(userProfile -> {
-                        UserProfileDto dto = new UserProfileDto();
-                        dto.setProfileID(userProfile.getProfileID());
-                        dto.setProfilePicture(userProfile.getProfilePicture());
-                        dto.setCoverPicture(userProfile.getCoverPicture());
+            if (userProfileOptional.isPresent()) {
+                UserProfile userProfile = userProfileOptional.get();
+                UserProfileDto dto = new UserProfileDto();
+                dto.setProfileID(userProfile.getProfileID());
+                dto.setProfilePicture(userProfile.getProfilePicture());
 
+                UserDto userDto = new UserDto();
+                userDto.setUserID(userProfile.getUser().getUserID());
+                userDto.setUserEmail(userProfile.getUser().getUserEmail());
+                userDto.setFirstName(userProfile.getUser().getFirstName());
+                userDto.setLastName(userProfile.getUser().getLastName());
+                userDto.setUserType(String.valueOf(userProfile.getUser().getUserType()));
 
-                        // Map nested user information without credentials
-                        UserDto userDto = new UserDto();
-                        userDto.setUserID(userProfile.getUser().getUserID());
-                        userDto.setUserEmail(userProfile.getUser().getUserEmail());
-                        userDto.setFirstName(userProfile.getUser().getFirstName());
-                        userDto.setLastName(userProfile.getUser().getLastName());
-                        userDto.setUserType(String.valueOf(userProfile.getUser().getUserType()));
+                dto.setUser(userDto);
 
-
-                        dto.setUser(userDto);
-                        return dto;
-                    })
-                    .collect(Collectors.toList());
-
-            response.setUserProfileGetResponse(userProfileDtoList);
-            response.setStatus("200");
-            response.setMessage("Profile images retrieved successfully");
-            response.setResponseCode("1600");
-
+                response.setUserProfileGetResponse(List.of(dto));
+                response.setStatus("200");
+                response.setMessage("Profile image retrieved successfully.");
+                response.setResponseCode("1602");
+            } else {
+                response.setStatus("404");
+                response.setMessage("Profile image not found.");
+                response.setResponseCode("1603");
+            }
         } catch (Exception e) {
             response.setStatus("500");
-            response.setMessage("Error retrieving product Details: " + e.getMessage());
-            response.setResponseCode("1601");
+            response.setMessage("Error retrieving Profile image: " + e.getMessage());
+            response.setResponseCode("1604");
         }
-
         return response;
     }
 

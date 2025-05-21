@@ -38,7 +38,7 @@ public class UserDetails {
     @Column(name = "address")
     private String address;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 

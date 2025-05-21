@@ -2,11 +2,14 @@ package com.example.AGRIMART.Service.impl.ConsumerImpl;
 
 import com.example.AGRIMART.Dto.ConsumerDto.CAddOrderImageDto;
 import com.example.AGRIMART.Dto.UserDto;
+import com.example.AGRIMART.Dto.UserProfileDto;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.CAddOrderImageAddResponse;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.CAddOrderImageGetResponse;
+import com.example.AGRIMART.Dto.response.UserProfileGetResponse;
 import com.example.AGRIMART.Entity.ConsumerEntity.CAddOrderImage;
 import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerAddOrder;
 import com.example.AGRIMART.Entity.User;
+import com.example.AGRIMART.Entity.UserProfile;
 import com.example.AGRIMART.Repository.ConsumerRepository.CAddOrderImageRepository;
 import com.example.AGRIMART.Repository.ConsumerRepository.ConsumerAddOrderRepository;
 import com.example.AGRIMART.Repository.UserRepository;
@@ -57,6 +60,7 @@ public class CAddOrderImageImpl implements CAddOrderImageService {
         Optional<User> userOptional = userRepository.findByUserEmail(username);
         Optional<ConsumerAddOrder> addOrderOptional = consumerAddOrderRepository.findByProductName(productName);
 
+
         if (userOptional.isEmpty()) {
             CAddOrderImageAddResponse response = new CAddOrderImageAddResponse();
             response.setMessage("User not found for the given username.");
@@ -71,16 +75,24 @@ public class CAddOrderImageImpl implements CAddOrderImageService {
 
         User user = userOptional.get();
         ConsumerAddOrder consumerAddOrder = addOrderOptional.get();
-        Optional<CAddOrderImage> existingAddOrderOptional = cAddOrderImageRepository.findById(cAddOrderImageDto.getImageID());
 
-        CAddOrderImage cAddOrderImage = existingAddOrderOptional.orElse(new CAddOrderImage());
+        Optional<CAddOrderImage> existingImageOptional = cAddOrderImageRepository.findByConsumerAddOrder_OrderID(consumerAddOrder.getOrderID());
 
+        CAddOrderImage cAddOrderImage;
+        String actionPerformed;
 
-        cAddOrderImage.setProductImage(cAddOrderImageDto.getProductImage());
-
-        cAddOrderImage.setUser(user);
-        cAddOrderImage.setConsumerAddOrder(consumerAddOrder);
-
+        if (existingImageOptional.isPresent()) {
+            // Update existing image
+            cAddOrderImage = existingImageOptional.get();
+            cAddOrderImage.setProductImage(cAddOrderImageDto.getProductImage());
+            actionPerformed = "updated";
+        } else {
+            cAddOrderImage = new CAddOrderImage();
+            cAddOrderImage.setProductImage(cAddOrderImageDto.getProductImage());
+            cAddOrderImage.setUser(user);
+            cAddOrderImage.setConsumerAddOrder(consumerAddOrder);
+            actionPerformed = "added";
+        }
         CAddOrderImageAddResponse response = new CAddOrderImageAddResponse();
         try {
             CAddOrderImage saveOrderImage = cAddOrderImageRepository.save(cAddOrderImage);
@@ -100,45 +112,83 @@ public class CAddOrderImageImpl implements CAddOrderImageService {
         return response;
     }
 
-    public CAddOrderImageGetResponse GetAllConsumerAddOrderImages() {
+//    public CAddOrderImageGetResponse GetAllConsumerAddOrderImages() {
+//        CAddOrderImageGetResponse response = new CAddOrderImageGetResponse();
+//        try {
+//            // Fetch all user details
+//            List<CAddOrderImage> cAddOrderImageList = cAddOrderImageRepository.findAll();
+//
+//            // Map UserDetails entities to a simplified DTO without sensitive data
+//            List<CAddOrderImageDto> cAddOrderImageDtoList = cAddOrderImageList.stream()
+//                    .map(cAddOrderImage -> {
+//                        CAddOrderImageDto dto = new CAddOrderImageDto();
+//                        dto.setImageID(cAddOrderImage.getImageID());
+//                        dto.setProductImage(cAddOrderImage.getProductImage());
+//
+//
+//                        // Map nested user information without credentials
+//                        UserDto userDto = new UserDto();
+//                        userDto.setUserID(cAddOrderImage.getUser().getUserID());
+//                        userDto.setUserEmail(cAddOrderImage.getUser().getUserEmail());
+//                        userDto.setFirstName(cAddOrderImage.getUser().getFirstName());
+//                        userDto.setLastName(cAddOrderImage.getUser().getLastName());
+//                        userDto.setUserType(String.valueOf(cAddOrderImage.getUser().getUserType()));
+//
+//
+//                        dto.setUser(userDto);
+//                        return dto;
+//                    })
+//                    .collect(Collectors.toList());
+//
+//            response.setCAddOrderImageGetResponse(cAddOrderImageDtoList);
+//            response.setStatus("200");
+//            response.setMessage("Order images retrieved successfully");
+//            response.setResponseCode("1600");
+//
+//        } catch (Exception e) {
+//            response.setStatus("500");
+//            response.setMessage("Error retrieving Order Images: " + e.getMessage());
+//            response.setResponseCode("1601");
+//        }
+//
+//        return response;
+//    }
+
+    @Override
+    public CAddOrderImageGetResponse GetCAddOrderImageFindById(int orderID) {
         CAddOrderImageGetResponse response = new CAddOrderImageGetResponse();
         try {
-            // Fetch all user details
-            List<CAddOrderImage> cAddOrderImageList = cAddOrderImageRepository.findAll();
+            Optional<CAddOrderImage> cAddOrderImageOptional = cAddOrderImageRepository.findById(orderID);
 
-            // Map UserDetails entities to a simplified DTO without sensitive data
-            List<CAddOrderImageDto> cAddOrderImageDtoList = cAddOrderImageList.stream()
-                    .map(cAddOrderImage -> {
-                        CAddOrderImageDto dto = new CAddOrderImageDto();
-                        dto.setImageID(cAddOrderImage.getImageID());
-                        dto.setProductImage(cAddOrderImage.getProductImage());
+            if (cAddOrderImageOptional.isPresent()) {
+                CAddOrderImage cAddOrderImage = cAddOrderImageOptional.get();
+                CAddOrderImageDto dto = new CAddOrderImageDto();
+                dto.setImageID(cAddOrderImage.getImageID());
+                dto.setProductImage(cAddOrderImage.getProductImage());
 
+                UserDto userDto = new UserDto();
+                userDto.setUserID(cAddOrderImage.getUser().getUserID());
+                userDto.setUserEmail(cAddOrderImage.getUser().getUserEmail());
+                userDto.setFirstName(cAddOrderImage.getUser().getFirstName());
+                userDto.setLastName(cAddOrderImage.getUser().getLastName());
+                userDto.setUserType(String.valueOf(cAddOrderImage.getUser().getUserType()));
 
-                        // Map nested user information without credentials
-                        UserDto userDto = new UserDto();
-                        userDto.setUserID(cAddOrderImage.getUser().getUserID());
-                        userDto.setUserEmail(cAddOrderImage.getUser().getUserEmail());
-                        userDto.setFirstName(cAddOrderImage.getUser().getFirstName());
-                        userDto.setLastName(cAddOrderImage.getUser().getLastName());
-                        userDto.setUserType(String.valueOf(cAddOrderImage.getUser().getUserType()));
+                dto.setUser(userDto);
 
-
-                        dto.setUser(userDto);
-                        return dto;
-                    })
-                    .collect(Collectors.toList());
-
-            response.setCAddOrderImageGetResponse(cAddOrderImageDtoList);
-            response.setStatus("200");
-            response.setMessage("Order images retrieved successfully");
-            response.setResponseCode("1600");
-
+                response.setCAddOrderImageGetResponse(List.of(dto));
+                response.setStatus("200");
+                response.setMessage("Profile image retrieved successfully.");
+                response.setResponseCode("1602");
+            } else {
+                response.setStatus("404");
+                response.setMessage("Profile image not found.");
+                response.setResponseCode("1603");
+            }
         } catch (Exception e) {
             response.setStatus("500");
-            response.setMessage("Error retrieving Order Images: " + e.getMessage());
-            response.setResponseCode("1601");
+            response.setMessage("Error retrieving Profile image: " + e.getMessage());
+            response.setResponseCode("1604");
         }
-
         return response;
     }
 }

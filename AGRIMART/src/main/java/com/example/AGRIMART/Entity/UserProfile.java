@@ -19,10 +19,8 @@ public class UserProfile {
     @Column(name = "profile_picture", columnDefinition = "LONGBLOB")
     private byte[] profilePicture;
 
-    @Column(name = "cover_picture", columnDefinition = "LONGBLOB")
-    private byte[] coverPicture;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 }

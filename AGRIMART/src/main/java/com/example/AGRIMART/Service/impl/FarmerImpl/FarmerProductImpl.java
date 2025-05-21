@@ -5,6 +5,7 @@ import com.example.AGRIMART.Dto.UserDto;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductAddResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductDeleteResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductGetResponse;
+import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerAddOrder;
 import com.example.AGRIMART.Entity.FarmerEntity.FarmerProduct;
 import com.example.AGRIMART.Entity.User;
 import com.example.AGRIMART.Repository.FarmerRepositoty.FarmerProductRepository;
@@ -107,7 +108,18 @@ public class FarmerProductImpl implements FarmerProductService {
 
         User user = userOptional.get();
         Optional<FarmerProduct> existingProductOptional = farmerProductRepository.findById(farmerProductDto.getProductID());
-        FarmerProduct farmerProduct = existingProductOptional.orElse(new FarmerProduct());
+        FarmerProduct farmerProduct;
+        String actionPerformed;
+
+        if (!existingProductOptional.isEmpty()) {
+            farmerProduct = existingProductOptional.get();
+            actionPerformed = "updated";
+        } else {
+            farmerProduct = new FarmerProduct();
+            farmerProduct.setUser(user);
+
+            actionPerformed = "added";
+        }
         // If product exists, we update the fields; if not, we create a new one
         farmerProduct.setProductName(farmerProductDto.getProductName());
         farmerProduct.setPrice(farmerProductDto.getPrice());
@@ -224,6 +236,63 @@ public class FarmerProductImpl implements FarmerProductService {
         } catch (Exception e) {
             response.setStatus("500");
             response.setMessage("Error retrieving product Details: " + e.getMessage());
+            response.setResponseCode("1601");
+        }
+
+        return response;
+    }
+
+    public FarmerProductGetResponse getFarmerProductByUserId(int userID) {
+        FarmerProductGetResponse response = new FarmerProductGetResponse();
+        try {
+            // Use the correct repository method that follows the entity relationship
+            List<FarmerProduct> farmerProductList = farmerProductRepository.findByUser_UserID(userID);
+
+            if (farmerProductList.isEmpty()) {
+                response.setStatus("404");
+                response.setMessage("No products found for user ID: " + userID);
+                response.setResponseCode("1602");
+                return response;
+            }
+            // Map FarmerOffer entities to DTOs
+            List<FarmerProductDto> farmerProductDtoList = farmerProductList.stream()
+                    .map(farmerProduct -> {
+                        FarmerProductDto dto = new FarmerProductDto();
+                        dto.setProductID(farmerProduct.getProductID());
+                        dto.setProductName(farmerProduct.getProductName());
+                        dto.setPrice(farmerProduct.getPrice());
+                        dto.setAvailableQuantity(farmerProduct.getAvailableQuantity());
+                        dto.setMinimumQuantity(farmerProduct.getMinimumQuantity());
+                        dto.setAddedDate(farmerProduct.getAddedDate());
+                        dto.setDescription(farmerProduct.getDescription());
+                        dto.setActive(farmerProduct.isActive());
+                        dto.setDeleted(farmerProduct.isDeleted());
+                        dto.setQuantityLowered(farmerProduct.isQuantityLowered());
+                        dto.setProductCategory(String.valueOf(farmerProduct.getProductCategory()));
+
+
+
+                        // Map nested user information without credentials
+                        UserDto userDto = new UserDto();
+                        userDto.setUserID(farmerProduct.getUser().getUserID());
+                        userDto.setUserEmail(farmerProduct.getUser().getUserEmail());
+                        userDto.setFirstName(farmerProduct.getUser().getFirstName());
+                        userDto.setLastName(farmerProduct.getUser().getLastName());
+                        userDto.setUserType(String.valueOf(farmerProduct.getUser().getUserType()));
+                        dto.setUser(userDto);
+
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+
+            response.setFarmerProductGetResponse(farmerProductDtoList);
+            response.setStatus("200");
+            response.setMessage("Product details retrieved successfully");
+            response.setResponseCode("1600");
+
+        } catch (Exception e) {
+            response.setStatus("500");
+            response.setMessage("Error retrieving product details: " + e.getMessage());
             response.setResponseCode("1601");
         }
 

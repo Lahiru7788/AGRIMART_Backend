@@ -12,7 +12,6 @@ public class UserProfileDto {
 
     private int profileID;
     private byte[] profilePicture;
-    private byte[] coverPicture;
     private UserDto user;
 
 }
