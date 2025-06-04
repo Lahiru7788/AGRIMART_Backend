@@ -39,7 +39,7 @@ public class SFOfferImpl implements SFOfferService {
     public SFOfferAddResponse saveOrUpdate(SFOfferDto sfOfferDto) {
         // Retrieve username from session
         String username = (String) session.getAttribute("userEmail");
-        String productID = (String) session.getAttribute("productID");
+        Integer productID = (Integer) session.getAttribute("productID");
 
         if (username == null || username.isEmpty()) {
             SFOfferAddResponse response = new SFOfferAddResponse();
@@ -49,7 +49,8 @@ public class SFOfferImpl implements SFOfferService {
         }
 
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<SFProduct> productOptional = SFProductRepository.findByProductName(productID);
+        Optional<SFProduct> productOptional = SFProductRepository.findByProductID(productID);
+
 
         if (userOptional.isEmpty()) {
             SFOfferAddResponse response = new SFOfferAddResponse();

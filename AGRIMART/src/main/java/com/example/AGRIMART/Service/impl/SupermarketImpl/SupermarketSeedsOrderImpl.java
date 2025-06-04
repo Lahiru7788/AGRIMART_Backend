@@ -7,6 +7,7 @@ import com.example.AGRIMART.Dto.UserDto;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.*;
 import com.example.AGRIMART.Dto.response.SupermarketResponse.*;
 import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerSeedsOrder;
+import com.example.AGRIMART.Entity.FarmerEntity.FarmerProduct;
 import com.example.AGRIMART.Entity.SFEntity.SFProduct;
 import com.example.AGRIMART.Entity.SupermarketEntity.SupermarketSeedsOrder;
 import com.example.AGRIMART.Entity.User;
@@ -52,7 +53,8 @@ public class SupermarketSeedsOrderImpl implements SupermarketSeedsOrderService {
         }
 
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<SFProduct> productOptionalSf = sfProductRepository.findByProductName(productID);
+        Optional<SFProduct> productOptionalSf = sfProductRepository.findByProductID(supermarketSeedsOrderDto.getProductID());
+
 
         if (userOptional.isEmpty()) {
             SupermarketSeedsOrderAddResponse response = new SupermarketSeedsOrderAddResponse();
@@ -102,6 +104,9 @@ public class SupermarketSeedsOrderImpl implements SupermarketSeedsOrderService {
         supermarketSeedsOrder.setSFProduct(sfProduct);
         supermarketSeedsOrder.setConfirmed(false);
         supermarketSeedsOrder.setRejected(false);
+        supermarketSeedsOrder.setAddedToCart(false);
+        supermarketSeedsOrder.setRemovedFromCart(false);
+        supermarketSeedsOrder.setPaid(false);
 
         SupermarketSeedsOrderAddResponse response = new SupermarketSeedsOrderAddResponse();
         try {
@@ -149,6 +154,9 @@ public class SupermarketSeedsOrderImpl implements SupermarketSeedsOrderService {
                         dto.setDescription(supermarketSeedsOrder.getDescription());
                         dto.setActive(supermarketSeedsOrder.isActive());
                         dto.setConfirmed(supermarketSeedsOrder.isConfirmed());
+                        dto.setAddedToCart(supermarketSeedsOrder.isAddedToCart());
+                        dto.setRemovedFromCart(supermarketSeedsOrder.isRemovedFromCart());
+                        dto.setPaid(supermarketSeedsOrder.isPaid());
                         dto.setProductCategory(String.valueOf(supermarketSeedsOrder.getProductCategory()));
 
 
@@ -230,6 +238,9 @@ public class SupermarketSeedsOrderImpl implements SupermarketSeedsOrderService {
                         dto.setDescription(supermarketSeedsOrder.getDescription());
                         dto.setActive(supermarketSeedsOrder.isActive());
                         dto.setConfirmed(supermarketSeedsOrder.isConfirmed());
+                        dto.setAddedToCart(supermarketSeedsOrder.isAddedToCart());
+                        dto.setRemovedFromCart(supermarketSeedsOrder.isRemovedFromCart());
+                        dto.setPaid(supermarketSeedsOrder.isPaid());
                         dto.setProductCategory(String.valueOf(supermarketSeedsOrder.getProductCategory()));
 
 
@@ -309,6 +320,9 @@ public class SupermarketSeedsOrderImpl implements SupermarketSeedsOrderService {
                         dto.setDescription(supermarketSeedsOrder.getDescription());
                         dto.setActive(supermarketSeedsOrder.isActive());
                         dto.setConfirmed(supermarketSeedsOrder.isConfirmed());
+                        dto.setAddedToCart(supermarketSeedsOrder.isAddedToCart());
+                        dto.setRemovedFromCart(supermarketSeedsOrder.isRemovedFromCart());
+                        dto.setPaid(supermarketSeedsOrder.isPaid());
                         dto.setProductCategory(String.valueOf(supermarketSeedsOrder.getProductCategory()));
 
 
@@ -393,6 +407,35 @@ public class SupermarketSeedsOrderImpl implements SupermarketSeedsOrderService {
     }
 
     @Override
+    public SupermarketSeedsPaymentResponse PaymentSupermarketSeedsOrderResponse(int orderID) {
+        SupermarketSeedsPaymentResponse response = new SupermarketSeedsPaymentResponse();
+
+        //calculation part
+        SupermarketSeedsOrder supermarketSeedsOrder;
+        supermarketSeedsOrder = supermarketSeedsOrderRepository.findByOrderID(orderID);
+
+
+
+        try {
+            supermarketSeedsOrder.setPaid(true);
+            supermarketSeedsOrderRepository.save(supermarketSeedsOrder);
+            response.setSupermarketSeedsPaymentResponse(supermarketSeedsOrder);
+            response.setMessage("product Id : " + orderID + " item delete successfully");
+            response.setStatus("200");
+            response.setResponseCode("11000");
+
+        }catch (Exception e){
+            response.setMessage("Error delete allocate item " + e.getMessage());
+            response.setResponseCode("11001");
+            response.setStatus("500");
+
+        }
+
+
+        return response;
+    }
+
+    @Override
     public SupermarketSeedsOrderConfirmResponse ConfirmSupermarketSeedsOrderResponse(int orderID) {
         SupermarketSeedsOrderConfirmResponse response = new SupermarketSeedsOrderConfirmResponse();
 
@@ -434,6 +477,92 @@ public class SupermarketSeedsOrderImpl implements SupermarketSeedsOrderService {
             supermarketSeedsOrder.setRejected(true);
             supermarketSeedsOrderRepository.save(supermarketSeedsOrder);
             response.setSupermarketSeedsOrderRejectResponse(supermarketSeedsOrder);
+            response.setMessage("product Id : " + orderID + " item delete successfully");
+            response.setStatus("200");
+            response.setResponseCode("11000");
+
+        }catch (Exception e){
+            response.setMessage("Error delete allocate item " + e.getMessage());
+            response.setResponseCode("11001");
+            response.setStatus("500");
+
+        }
+
+
+        return response;
+    }
+
+    @Override
+    public SupermarketSeedsOrderAddToCartResponse AddToCartSupermarketSeedsOrderResponse(int orderID) {
+        SupermarketSeedsOrderAddToCartResponse response = new SupermarketSeedsOrderAddToCartResponse();
+
+        //calculation part
+        SupermarketSeedsOrder supermarketSeedsOrder;
+        supermarketSeedsOrder = supermarketSeedsOrderRepository.findByOrderID(orderID);
+
+
+
+        try {
+            SFProduct sfProduct = supermarketSeedsOrder.getSFProduct();
+            double requiredQuantity = supermarketSeedsOrder.getRequiredQuantity();
+            double availableQuantity = sfProduct.getAvailableQuantity();
+            if (availableQuantity >= requiredQuantity) {
+                // Update the available quantity
+                double newAvailableQuantity = availableQuantity - requiredQuantity;
+                sfProduct.setAvailableQuantity(newAvailableQuantity); // Assuming there's a setAvailableQuantity method
+
+                // Save the updated product
+                sfProductRepository.save(sfProduct); // Assuming you have a productRepository
+
+                // Mark order as added to cart
+                supermarketSeedsOrder.setAddedToCart(true);
+                supermarketSeedsOrderRepository.save(supermarketSeedsOrder);
+                response.setSupermarketSeedsOrderAddToCartResponse(supermarketSeedsOrder);
+                response.setMessage("product Id : " + orderID + " item delete successfully");
+                response.setStatus("200");
+                response.setResponseCode("11000");
+            } else {
+                // Not enough quantity available
+                response.setMessage("Insufficient quantity available. Required: " + requiredQuantity + ", Available: " + availableQuantity);
+                response.setStatus("400");
+                response.setResponseCode("11002");
+            }
+        }catch (Exception e){
+            response.setMessage("Error delete allocate item " + e.getMessage());
+            response.setResponseCode("11001");
+            response.setStatus("500");
+
+        }
+
+
+        return response;
+    }
+
+    @Override
+    public SupermarketSeedsOrderRemovedFromCartResponse RemovedFromCartSupermarketSeedsOrderResponse(int orderID) {
+        SupermarketSeedsOrderRemovedFromCartResponse response = new SupermarketSeedsOrderRemovedFromCartResponse();
+
+        //calculation part
+        SupermarketSeedsOrder supermarketSeedsOrder;
+        supermarketSeedsOrder = supermarketSeedsOrderRepository.findByOrderID(orderID);
+
+
+
+        try {
+            SFProduct sfProduct = supermarketSeedsOrder.getSFProduct();
+            double requiredQuantity = supermarketSeedsOrder.getRequiredQuantity();
+            double availableQuantity = sfProduct.getAvailableQuantity();
+            // Update the available quantity
+            double newAvailableQuantity = availableQuantity + requiredQuantity;
+            sfProduct.setAvailableQuantity(newAvailableQuantity); // Assuming there's a setAvailableQuantity method
+
+            // Save the updated product
+            sfProductRepository.save(sfProduct); // Assuming you have a productRepository
+
+            // Mark order as added to cart
+            supermarketSeedsOrder.setRemovedFromCart(true);
+            supermarketSeedsOrderRepository.save(supermarketSeedsOrder);
+            response.setSupermarketSeedsOrderRemovedFromCartResponse(supermarketSeedsOrder);
             response.setMessage("product Id : " + orderID + " item delete successfully");
             response.setStatus("200");
             response.setResponseCode("11000");

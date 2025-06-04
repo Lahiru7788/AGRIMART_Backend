@@ -2,7 +2,9 @@ package com.example.AGRIMART.Entity.FarmerEntity;
 
 import com.example.AGRIMART.Dto.FarmerDto.FarmerProductDto;
 import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerOrder;
+import com.example.AGRIMART.Entity.SFEntity.SFOrder;
 import com.example.AGRIMART.Entity.SupermarketEntity.SupermarketOrder;
+import com.example.AGRIMART.Entity.TrainerEntity.TrainerOrder;
 import com.example.AGRIMART.Entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,7 +26,7 @@ public class FarmerProduct {
     @Id
     @Column(name = "product_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int productID;
+    private Integer productID;
 
     @Column(name = "product_name")
     private String productName;
@@ -76,4 +78,10 @@ public class FarmerProduct {
 
     @OneToMany(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FarmerProductImage> farmerProductImage = new ArrayList<>();
+
+    @OneToMany(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SFOrder> sfOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "farmerProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TrainerOrder> trainerOrders = new ArrayList<>();
 }

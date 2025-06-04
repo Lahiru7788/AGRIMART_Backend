@@ -54,4 +54,22 @@ public class SupermarketSeedsOrderController {
         return supermarketSeedsOrderService.RejectSupermarketSeedsOrderResponse(orderID);
 
     }
+
+    @PutMapping(value = "/SupermarketSeeds-addedToCart/{orderID}/confirm")
+    public SupermarketSeedsOrderAddToCartResponse AddToCartSupermarketSeedsOrderResponse(@PathVariable int orderID){
+        return supermarketSeedsOrderService.AddToCartSupermarketSeedsOrderResponse(orderID);
+
+    }
+
+    @PutMapping(value = "/SupermarketSeeds-removedFromCart/{orderID}/confirm")
+    public SupermarketSeedsOrderRemovedFromCartResponse RemovedFromCartSupermarketSeedsOrderResponse(@PathVariable int orderID){
+        return supermarketSeedsOrderService.RemovedFromCartSupermarketSeedsOrderResponse(orderID);
+
+    }
+
+    @PutMapping(value = "/SupermarketSeeds-payment/{orderID}/confirm")
+    public SupermarketSeedsPaymentResponse PaymentSupermarketSeedsOrderResponse(@PathVariable int orderID){
+        return supermarketSeedsOrderService.PaymentSupermarketSeedsOrderResponse(orderID);
+
+    }
 }

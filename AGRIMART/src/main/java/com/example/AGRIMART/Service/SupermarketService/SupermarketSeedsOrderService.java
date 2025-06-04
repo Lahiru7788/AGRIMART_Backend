@@ -15,4 +15,7 @@ public interface SupermarketSeedsOrderService {
     SupermarketSeedsOrderConfirmResponse ConfirmSupermarketSeedsOrderResponse(int orderID);
     SupermarketSeedsOrderRejectResponse RejectSupermarketSeedsOrderResponse(int orderID);
     SupermarketSeedsOrderGetResponse getSupermarketSeedsOrderBySeedsSellerUserId(int userID);
+    SupermarketSeedsOrderAddToCartResponse AddToCartSupermarketSeedsOrderResponse(int orderID);
+    SupermarketSeedsOrderRemovedFromCartResponse RemovedFromCartSupermarketSeedsOrderResponse(int orderID);
+    SupermarketSeedsPaymentResponse PaymentSupermarketSeedsOrderResponse(int orderID);
 }

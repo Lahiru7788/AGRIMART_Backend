@@ -146,6 +146,8 @@ public class FarmerProductImpl implements FarmerProductService {
                 response.setMessage("Product was saved/updated successfully.");
                 response.setStatus("200");
                 response.setResponseCode("1000");
+                response.setProductID(savedProduct.getProductID()); // Return auto-generated ID
+                System.out.println("Saved Product ID: " + savedProduct.getProductID());
             } else {
                 response.setMessage("Failed to save/update product.");
                 response.setStatus("400");
@@ -299,16 +301,51 @@ public class FarmerProductImpl implements FarmerProductService {
         return response;
     }
 
+//    @Override
+//    public FarmerProductDeleteResponse DeleteFarmerResponse(int productID) {
+//        FarmerProductDeleteResponse response = new FarmerProductDeleteResponse();
+//
+//        //calculation part
+//        FarmerProduct farmerProduct;
+//        farmerProduct = farmerProductRepository.findByProductID(productID);
+//
+//
+//
+//        try {
+//            farmerProduct.setDeleted(true);
+//            farmerProductRepository.save(farmerProduct);
+//            response.setFarmerProductDeleteResponse(farmerProduct);
+//            response.setMessage("product Id : " + productID + " item delete successfully");
+//            response.setStatus("200");
+//            response.setResponseCode("11000");
+//
+//        }catch (Exception e){
+//            response.setMessage("Error delete allocate item " + e.getMessage());
+//            response.setResponseCode("11001");
+//            response.setStatus("500");
+//
+//        }
+//
+//
+//        return response;
+//    }
+
     @Override
     public FarmerProductDeleteResponse DeleteFarmerResponse(int productID) {
         FarmerProductDeleteResponse response = new FarmerProductDeleteResponse();
 
-        //calculation part
-        FarmerProduct farmerProduct;
-        farmerProduct = farmerProductRepository.findByProductID(productID);
+        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductID(productID);
 
+        if (productOptional.isEmpty()) {
+            response.setMessage("Product not found for ID: " + productID);
+            response.setStatus("404");
+            response.setResponseCode("11002");
+            return response;
+        }
 
+        FarmerProduct farmerProduct = productOptional.get();
 
+        // Rest of your code remains the same
         try {
             farmerProduct.setDeleted(true);
             farmerProductRepository.save(farmerProduct);
@@ -316,14 +353,11 @@ public class FarmerProductImpl implements FarmerProductService {
             response.setMessage("product Id : " + productID + " item delete successfully");
             response.setStatus("200");
             response.setResponseCode("11000");
-
-        }catch (Exception e){
+        } catch (Exception e) {
             response.setMessage("Error delete allocate item " + e.getMessage());
             response.setResponseCode("11001");
             response.setStatus("500");
-
         }
-
 
         return response;
     }

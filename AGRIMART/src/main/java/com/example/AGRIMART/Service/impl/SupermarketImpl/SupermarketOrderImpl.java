@@ -53,7 +53,8 @@ public class SupermarketOrderImpl implements SupermarketOrderService {
         }
 
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductName(productID);
+        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductID(supermarketOrderDto.getProductID());
+
 
         if (userOptional.isEmpty()) {
             SupermarketOrderAddResponse response = new SupermarketOrderAddResponse();
@@ -103,6 +104,9 @@ public class SupermarketOrderImpl implements SupermarketOrderService {
         supermarketOrder.setFarmerProduct(farmerProduct);
         supermarketOrder.setConfirmed(false);
         supermarketOrder.setRejected(false);
+        supermarketOrder.setAddedToCart(false);
+        supermarketOrder.setRemovedFromCart(false);
+        supermarketOrder.setPaid(false);
 
         SupermarketOrderAddResponse response = new SupermarketOrderAddResponse();
         try {
@@ -150,6 +154,9 @@ public class SupermarketOrderImpl implements SupermarketOrderService {
                         dto.setDescription(supermarketOrder.getDescription());
                         dto.setActive(supermarketOrder.isActive());
                         dto.setConfirmed(supermarketOrder.isConfirmed());
+                        dto.setAddedToCart(supermarketOrder.isAddedToCart());
+                        dto.setRemovedFromCart(supermarketOrder.isRemovedFromCart());
+                        dto.setPaid(supermarketOrder.isPaid());
                         dto.setProductCategory(String.valueOf(supermarketOrder.getProductCategory()));
 
 
@@ -230,6 +237,9 @@ public class SupermarketOrderImpl implements SupermarketOrderService {
                         dto.setDescription(supermarketOrder.getDescription());
                         dto.setActive(supermarketOrder.isActive());
                         dto.setConfirmed(supermarketOrder.isConfirmed());
+                        dto.setAddedToCart(supermarketOrder.isAddedToCart());
+                        dto.setRemovedFromCart(supermarketOrder.isRemovedFromCart());
+                        dto.setPaid(supermarketOrder.isPaid());
                         dto.setProductCategory(String.valueOf(supermarketOrder.getProductCategory()));
 
 
@@ -310,6 +320,9 @@ public class SupermarketOrderImpl implements SupermarketOrderService {
                         dto.setDescription(supermarketOrder.getDescription());
                         dto.setActive(supermarketOrder.isActive());
                         dto.setConfirmed(supermarketOrder.isConfirmed());
+                        dto.setAddedToCart(supermarketOrder.isAddedToCart());
+                        dto.setRemovedFromCart(supermarketOrder.isRemovedFromCart());
+                        dto.setPaid(supermarketOrder.isPaid());
                         dto.setProductCategory(String.valueOf(supermarketOrder.getProductCategory()));
 
 
@@ -394,6 +407,35 @@ public class SupermarketOrderImpl implements SupermarketOrderService {
     }
 
     @Override
+    public SupermarketOrderPaymentResponse PaymentSupermarketOrderResponse(int orderID) {
+        SupermarketOrderPaymentResponse response = new SupermarketOrderPaymentResponse();
+
+        //calculation part
+        SupermarketOrder supermarketOrder;
+        supermarketOrder = supermarketOrderRepository.findByOrderID(orderID);
+
+
+
+        try {
+            supermarketOrder.setPaid(true);
+            supermarketOrderRepository.save(supermarketOrder);
+            response.setSupermarketOrderPaymentResponse(supermarketOrder);
+            response.setMessage("product Id : " + orderID + " item delete successfully");
+            response.setStatus("200");
+            response.setResponseCode("11000");
+
+        }catch (Exception e){
+            response.setMessage("Error delete allocate item " + e.getMessage());
+            response.setResponseCode("11001");
+            response.setStatus("500");
+
+        }
+
+
+        return response;
+    }
+
+    @Override
     public SupermarketOrderConfirmResponse ConfirmSupermarketOrderResponse(int orderID) {
         SupermarketOrderConfirmResponse response = new SupermarketOrderConfirmResponse();
 
@@ -436,6 +478,92 @@ public class SupermarketOrderImpl implements SupermarketOrderService {
             supermarketOrder.setRejected(true);
             supermarketOrderRepository.save(supermarketOrder);
             response.setSupermarketOrderRejectResponse(supermarketOrder);
+            response.setMessage("product Id : " + orderID + " item delete successfully");
+            response.setStatus("200");
+            response.setResponseCode("11000");
+
+        }catch (Exception e){
+            response.setMessage("Error delete allocate item " + e.getMessage());
+            response.setResponseCode("11001");
+            response.setStatus("500");
+
+        }
+
+
+        return response;
+    }
+
+    @Override
+    public SupermarketOrderAddToCartResponse AddToCartSupermarketOrderResponse(int orderID) {
+        SupermarketOrderAddToCartResponse response = new SupermarketOrderAddToCartResponse();
+
+        //calculation part
+        SupermarketOrder supermarketOrder;
+        supermarketOrder = supermarketOrderRepository.findByOrderID(orderID);
+
+
+
+        try {
+            FarmerProduct farmerProduct = supermarketOrder.getFarmerProduct();
+            double requiredQuantity = supermarketOrder.getRequiredQuantity();
+            double availableQuantity = farmerProduct.getAvailableQuantity();
+            if (availableQuantity >= requiredQuantity) {
+                // Update the available quantity
+                double newAvailableQuantity = availableQuantity - requiredQuantity;
+                farmerProduct.setAvailableQuantity(newAvailableQuantity); // Assuming there's a setAvailableQuantity method
+
+                // Save the updated product
+                farmerProductRepository.save(farmerProduct); // Assuming you have a productRepository
+
+                // Mark order as added to cart
+                supermarketOrder.setAddedToCart(true);
+                supermarketOrderRepository.save(supermarketOrder);
+                response.setSupermarketOrderAddToCartResponse(supermarketOrder);
+                response.setMessage("product Id : " + orderID + " item delete successfully");
+                response.setStatus("200");
+                response.setResponseCode("11000");
+            } else {
+                // Not enough quantity available
+                response.setMessage("Insufficient quantity available. Required: " + requiredQuantity + ", Available: " + availableQuantity);
+                response.setStatus("400");
+                response.setResponseCode("11002");
+            }
+        }catch (Exception e){
+            response.setMessage("Error delete allocate item " + e.getMessage());
+            response.setResponseCode("11001");
+            response.setStatus("500");
+
+        }
+
+
+        return response;
+    }
+
+    @Override
+    public SupermarketOrderRemovedFromCartResponse RemovedFromCartSupermarketOrderResponse(int orderID) {
+        SupermarketOrderRemovedFromCartResponse response = new SupermarketOrderRemovedFromCartResponse();
+
+        //calculation part
+        SupermarketOrder supermarketOrder;
+        supermarketOrder = supermarketOrderRepository.findByOrderID(orderID);
+
+
+
+        try {
+            FarmerProduct farmerProduct = supermarketOrder.getFarmerProduct();
+            double requiredQuantity = supermarketOrder.getRequiredQuantity();
+            double availableQuantity = farmerProduct.getAvailableQuantity();
+            // Update the available quantity
+            double newAvailableQuantity = availableQuantity + requiredQuantity;
+            farmerProduct.setAvailableQuantity(newAvailableQuantity); // Assuming there's a setAvailableQuantity method
+
+            // Save the updated product
+            farmerProductRepository.save(farmerProduct); // Assuming you have a productRepository
+
+            // Mark order as added to cart
+            supermarketOrder.setRemovedFromCart(true);
+            supermarketOrderRepository.save(supermarketOrder);
+            response.setSupermarketOrderRemovedFromCartResponse(supermarketOrder);
             response.setMessage("product Id : " + orderID + " item delete successfully");
             response.setStatus("200");
             response.setResponseCode("11000");

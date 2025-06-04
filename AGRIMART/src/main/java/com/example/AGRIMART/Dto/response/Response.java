@@ -12,4 +12,8 @@ public class Response {
     private String ResponseCode;
     private String status;
     private String message;
+    private Integer productID;
+    private Integer orderID;
+    private Integer courseID;
+    private Integer hireID;
 }

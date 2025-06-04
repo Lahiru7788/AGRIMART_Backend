@@ -15,5 +15,6 @@ public interface ConsumerOrderService {
     ConsumerOrderRejectResponse RejectConsumerOrderResponse(int orderID);
     ConsumerOrderAddToCartResponse AddToCartConsumerOrderResponse(int orderID);
     ConsumerOrderRemovedFromCartResponse RemovedFromCartConsumerOrderResponse(int orderID);
+    ConsumerOrderPaymentResponse PaymentConsumerOrderResponse(int orderID);
 
 }

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface SupermarketAddOrderRepository extends JpaRepository<SupermarketAddOrder,Integer> {
     Optional<SupermarketAddOrder> findByProductName(String ProductName);
-    SupermarketAddOrder findByOrderID(int orderID);
+//    SupermarketAddOrder findByOrderID(int orderID);
+    Optional<SupermarketAddOrder> findByOrderID(int orderID);
     List<SupermarketAddOrder> findByUser_UserID(int userID);
 }

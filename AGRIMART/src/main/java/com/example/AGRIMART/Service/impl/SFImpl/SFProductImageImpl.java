@@ -4,6 +4,7 @@ import com.example.AGRIMART.Dto.SFDto.SFProductImageDto;
 import com.example.AGRIMART.Dto.UserDto;
 import com.example.AGRIMART.Dto.response.SFResponse.SFProductImageAddResponse;
 import com.example.AGRIMART.Dto.response.SFResponse.SFProductImageGetResponse;
+import com.example.AGRIMART.Entity.FarmerEntity.FarmerProduct;
 import com.example.AGRIMART.Entity.SFEntity.SFProductImage;
 import com.example.AGRIMART.Entity.SFEntity.SFProduct;
 import com.example.AGRIMART.Entity.User;
@@ -37,7 +38,7 @@ public class SFProductImageImpl implements SFProductImageService {
     public SFProductImageAddResponse save(SFProductImageDto SFProductImageDto) {
         // Retrieve username from session
         String username = (String) session.getAttribute("userEmail");
-        String productID = (String) session.getAttribute("productID");
+        Integer productID = (Integer) session.getAttribute("productID");
 
         if (username == null || productID == null || username.isEmpty()) {
             SFProductImageAddResponse response = new SFProductImageAddResponse();
@@ -48,7 +49,8 @@ public class SFProductImageImpl implements SFProductImageService {
 
         // Find user by username
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<SFProduct> productOptional = SFProductRepository.findByProductName(productID);
+        Optional<SFProduct> productOptional = SFProductRepository.findByProductID(productID);
+
 
         if (userOptional.isEmpty() || productOptional.isEmpty()) {
             SFProductImageAddResponse response = new SFProductImageAddResponse();
@@ -97,6 +99,8 @@ public class SFProductImageImpl implements SFProductImageService {
 
         return response;
     }
+
+
 
     @Override
     public SFProductImageGetResponse GetSAndFProductImageFindById(int productID) {

@@ -42,7 +42,7 @@ public class ConsumerOfferImpl implements ConsumerOfferService {
     public ConsumerOfferAddResponse saveOrUpdate(ConsumerOfferDto consumerOfferDto) {
         // Retrieve username from session
         String username = (String) session.getAttribute("userEmail");
-        String productName = (String) session.getAttribute("productName");
+        Integer orderID = (Integer) session.getAttribute("orderID");
 
         if (username == null || username.isEmpty()) {
             ConsumerOfferAddResponse response = new ConsumerOfferAddResponse();
@@ -52,7 +52,7 @@ public class ConsumerOfferImpl implements ConsumerOfferService {
         }
 
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<ConsumerAddOrder> orderOptional = consumerAddOrderRepository.findByProductName(productName);
+        Optional<ConsumerAddOrder> addOrderOptional = consumerAddOrderRepository.findById(orderID);
 
         if (userOptional.isEmpty()) {
             ConsumerOfferAddResponse response = new ConsumerOfferAddResponse();
@@ -60,14 +60,14 @@ public class ConsumerOfferImpl implements ConsumerOfferService {
             return response;
         }
 
-        if (orderOptional.isEmpty()) {
+        if (addOrderOptional.isEmpty()) {
             ConsumerOfferAddResponse response = new ConsumerOfferAddResponse();
             response.setMessage(" Product not found for the given product name.");
             return response;
         }
 
         User user = userOptional.get();
-        ConsumerAddOrder consumerAddOrder = orderOptional.get();
+        ConsumerAddOrder consumerAddOrder = addOrderOptional.get();
         List<ConsumerOffer> existingOffers = consumerOfferRepository.findByConsumerAddOrder_OrderID(consumerAddOrder.getOrderID());
 
         ConsumerOffer consumerOffer;

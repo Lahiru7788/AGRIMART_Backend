@@ -16,7 +16,7 @@ import java.util.Date;
 public class SupermarketOrderDto {
 
     private int orderID;
-    //    private int productID;
+    private int productID;
     private String productName;
     private BigDecimal price;
     private double requiredQuantity;
@@ -27,6 +27,7 @@ public class SupermarketOrderDto {
     private boolean isRejected;
     private boolean isAddedToCart;
     private boolean isRemovedFromCart;
+    private boolean isPaid;
     private String productCategory;
     private UserDto user;
     private FarmerProductDto farmerProduct;

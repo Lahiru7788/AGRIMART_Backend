@@ -54,5 +54,23 @@ public class ConsumerSeedsOrderController {
         return consumerSeedsOrderService.RejectConsumerSeedsOrderResponse(orderID);
 
     }
+
+    @PutMapping(value = "/consumerSeeds-addedToCart/{orderID}/confirm")
+    public ConsumerSeedsOrderAddToCartResponse AddToCartConsumerSeedsOrderResponse(@PathVariable int orderID){
+        return consumerSeedsOrderService.AddToCartConsumerSeedsOrderResponse(orderID);
+
+    }
+
+    @PutMapping(value = "/consumerSeeds-removedFromCart/{orderID}/confirm")
+    public ConsumerSeedsOrderRemovedFromCartResponse RemovedFromCartConsumerSeedsOrderResponse(@PathVariable int orderID){
+        return consumerSeedsOrderService.RemovedFromCartConsumerSeedsOrderResponse(orderID);
+
+    }
+
+    @PutMapping(value = "/consumerSeeds-payment/{orderID}/confirm")
+    public ConsumerSeedsOrderPaymentResponse PaymentConsumerSeedsOrderResponse(@PathVariable int orderID){
+        return consumerSeedsOrderService.PaymentConsumerSeedsOrderResponse(orderID);
+
+    }
 }
 

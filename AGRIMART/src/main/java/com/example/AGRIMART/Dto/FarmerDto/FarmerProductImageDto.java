@@ -13,5 +13,6 @@ public class FarmerProductImageDto {
     private int imageID;
     private int productID;
     private byte[] productImage;
+    private FarmerProductDto farmerProduct;
     private UserDto user;
 }

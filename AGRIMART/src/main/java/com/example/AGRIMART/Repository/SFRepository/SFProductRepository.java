@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface SFProductRepository extends JpaRepository<SFProduct,Integer> {
     Optional<SFProduct> findByProductName(String productID);
     List<SFProduct> findByUser_UserID(int userID);
-    SFProduct findByProductID(int productID);
+//    SFProduct findByProductID(int productID);
+    Optional<SFProduct> findByProductID(int productID);
 //    List<SFProduct> findBySFProductProductID(int productID);
 }

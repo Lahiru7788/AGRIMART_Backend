@@ -8,7 +8,8 @@ import java.util.Optional;
 
 public interface FarmerProductRepository extends JpaRepository<FarmerProduct,Integer> {
     Optional<FarmerProduct> findByProductName( String productID);
-    FarmerProduct findByProductID(int productID);
+    Optional<FarmerProduct> findByProductID(int productID);
+//    Optional<FarmerProduct> findByProductIDOptional(int productID);
     List<FarmerProduct> findByUser_UserID(int userID);
 //    List<FarmerProduct> findByFarmerProduct_ProductID(int productID);
 

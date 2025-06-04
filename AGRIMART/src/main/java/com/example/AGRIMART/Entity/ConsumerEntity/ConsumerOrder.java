@@ -39,7 +39,6 @@ public class ConsumerOrder {
     @Column(name ="required_quantity")
     private double requiredQuantity;
 
-
     @Column(name = "description")
     private String description;
 
@@ -60,6 +59,9 @@ public class ConsumerOrder {
 
     @Column(name = "is_removedFromCart")
     private boolean isRemovedFromCart;
+
+    @Column(name = "is_paid")
+    private boolean isPaid;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")

@@ -66,4 +66,10 @@ public class ConsumerOrderController {
         return consumerOrderService.RemovedFromCartConsumerOrderResponse(orderID);
 
     }
+
+    @PutMapping(value = "/consumer-payment/{orderID}/confirm")
+    public ConsumerOrderPaymentResponse PaymentConsumerOrderResponse(@PathVariable int orderID){
+        return consumerOrderService.PaymentConsumerOrderResponse(orderID);
+
+    }
 }

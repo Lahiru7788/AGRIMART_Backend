@@ -24,7 +24,7 @@ public class SupermarketAddOrder {
     @Id
     @Column(name = "order_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int orderID;
+    private Integer orderID;
 
     @Column(name = "product_name")
     private String productName;

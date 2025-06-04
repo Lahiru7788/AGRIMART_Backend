@@ -14,4 +14,8 @@ public interface ConsumerSeedsOrderService {
     ConsumerSeedsOrderConfirmResponse ConfirmConsumerSeedsOrderResponse(int orderID);
     ConsumerSeedsOrderRejectResponse RejectConsumerSeedsOrderResponse(int orderID);
     ConsumerSeedsOrderGetResponse getConsumerSeedsOrderBySeedsSellerUserId(int userID);
+    ConsumerSeedsOrderAddToCartResponse AddToCartConsumerSeedsOrderResponse(int orderID);
+    ConsumerSeedsOrderRemovedFromCartResponse RemovedFromCartConsumerSeedsOrderResponse(int orderID);
+    ConsumerSeedsOrderPaymentResponse PaymentConsumerSeedsOrderResponse(int orderID);
+
 }

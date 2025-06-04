@@ -51,7 +51,8 @@ public class ConsumerOrderImpl implements ConsumerOrderService {
         }
 
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductName(productID);
+        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductID(consumerOrderDto.getProductID());
+
 
         if (userOptional.isEmpty()) {
             ConsumerOrderAddResponse response = new ConsumerOrderAddResponse();
@@ -103,6 +104,7 @@ public class ConsumerOrderImpl implements ConsumerOrderService {
         consumerOrder.setRejected(false);
         consumerOrder.setAddedToCart(false);
         consumerOrder.setRemovedFromCart(false);
+        consumerOrder.setPaid(false);
 
         ConsumerOrderAddResponse response = new ConsumerOrderAddResponse();
         try {
@@ -152,6 +154,7 @@ public class ConsumerOrderImpl implements ConsumerOrderService {
                         dto.setConfirmed(consumerOrder.isConfirmed());
                         dto.setAddedToCart(consumerOrder.isAddedToCart());
                         dto.setRemovedFromCart(consumerOrder.isRemovedFromCart());
+                        dto.setPaid(consumerOrder.isPaid());
                         dto.setProductCategory(String.valueOf(consumerOrder.getProductCategory()));
 
 
@@ -234,6 +237,7 @@ public class ConsumerOrderImpl implements ConsumerOrderService {
                         dto.setConfirmed(consumerOrder.isConfirmed());
                         dto.setAddedToCart(consumerOrder.isAddedToCart());
                         dto.setRemovedFromCart(consumerOrder.isRemovedFromCart());
+                        dto.setPaid(consumerOrder.isPaid());
                         dto.setProductCategory(String.valueOf(consumerOrder.getProductCategory()));
 
                         // Map nested user information without credentials
@@ -314,6 +318,7 @@ public class ConsumerOrderImpl implements ConsumerOrderService {
                         dto.setConfirmed(consumerOrder.isConfirmed());
                         dto.setAddedToCart(consumerOrder.isAddedToCart());
                         dto.setRemovedFromCart(consumerOrder.isRemovedFromCart());
+                        dto.setPaid(consumerOrder.isPaid());
                         dto.setProductCategory(String.valueOf(consumerOrder.getProductCategory()));
 
 
@@ -526,6 +531,35 @@ public class ConsumerOrderImpl implements ConsumerOrderService {
             consumerOrder.setRemovedFromCart(true);
             consumerOrderRepository.save(consumerOrder);
             response.setConsumerOrderRemovedFromCartResponse(consumerOrder);
+            response.setMessage("product Id : " + orderID + " item delete successfully");
+            response.setStatus("200");
+            response.setResponseCode("11000");
+
+        }catch (Exception e){
+            response.setMessage("Error delete allocate item " + e.getMessage());
+            response.setResponseCode("11001");
+            response.setStatus("500");
+
+        }
+
+
+        return response;
+    }
+
+    @Override
+    public ConsumerOrderPaymentResponse PaymentConsumerOrderResponse(int orderID) {
+        ConsumerOrderPaymentResponse response = new ConsumerOrderPaymentResponse();
+
+        //calculation part
+        ConsumerOrder consumerOrder;
+        consumerOrder = consumerOrderRepository.findByOrderID(orderID);
+
+
+
+        try {
+            consumerOrder.setPaid(true);
+            consumerOrderRepository.save(consumerOrder);
+            response.setConsumerOrderPaymentResponse(consumerOrder);
             response.setMessage("product Id : " + orderID + " item delete successfully");
             response.setStatus("200");
             response.setResponseCode("11000");

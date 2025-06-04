@@ -3,6 +3,7 @@ package com.example.AGRIMART.Entity.SFEntity;
 import com.example.AGRIMART.Dto.SFDto.SFProductDto;
 import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerOrder;
 import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerSeedsOrder;
+import com.example.AGRIMART.Entity.FarmerEntity.FarmerSeedsOrder;
 import com.example.AGRIMART.Entity.SupermarketEntity.SupermarketSeedsOrder;
 import com.example.AGRIMART.Entity.User;
 import jakarta.persistence.*;
@@ -25,7 +26,7 @@ public class SFProduct {
     @Id
     @Column(name = "product_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int productID;
+    private Integer productID;
 
     @Column(name = "product_name")
     private String productName;
@@ -73,4 +74,7 @@ public class SFProduct {
 
     @OneToMany(mappedBy = "SFProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SupermarketSeedsOrder> supermarketSeedsOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "SFProduct", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FarmerSeedsOrder> farmerSeedsOrders = new ArrayList<>();
 }

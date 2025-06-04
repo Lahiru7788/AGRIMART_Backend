@@ -45,7 +45,7 @@ public class SAddOrderImageImpl implements SAddOrderImageService {
     public SAddOrderImageAddResponse save(SAddOrderImageDto sAddOrderImageDto) {
         // Retrieve username from session
         String username = (String) session.getAttribute("userEmail");
-        String productName = (String) session.getAttribute("productName");
+        Integer orderID = (Integer) session.getAttribute("orderID");
 
         if (username == null || username.isEmpty()) {
             SAddOrderImageAddResponse response = new SAddOrderImageAddResponse();
@@ -62,7 +62,7 @@ public class SAddOrderImageImpl implements SAddOrderImageService {
 //        }
         // Find user by username
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<SupermarketAddOrder> addOrderOptional = supermarketAddOrderRepository.findByProductName(productName);
+        Optional<SupermarketAddOrder> addOrderOptional = supermarketAddOrderRepository.findById(orderID);
 
 
         if (userOptional.isEmpty()) {

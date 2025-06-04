@@ -97,21 +97,23 @@
 //
 //    return response;
 //
-//    }
-//}
+//
 
 package com.example.AGRIMART.Service.impl;
 
 import com.example.AGRIMART.Dto.CredentialDto;
-
 import com.example.AGRIMART.Dto.response.CredentialAddResponse;
-import com.example.AGRIMART.Dto.response.UserAddResponse;
+import com.example.AGRIMART.Dto.request.ForgotPasswordRequest;
+import com.example.AGRIMART.Dto.request.UpdatePasswordRequest;
+import com.example.AGRIMART.Dto.response.ForgotPasswordResponse;
+import com.example.AGRIMART.Dto.response.UpdatePasswordResponse;
 import com.example.AGRIMART.Entity.Credentials;
 import com.example.AGRIMART.Entity.User;
 import com.example.AGRIMART.Repository.CredentialRepository;
-
 import com.example.AGRIMART.Repository.UserRepository;
 import com.example.AGRIMART.Service.CredentialService;
+import com.example.AGRIMART.Service.EmailService;
+import com.example.AGRIMART.Util.PasswordGenerator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -123,22 +125,25 @@ public class CredentialImpl implements CredentialService {
 
     @Autowired
     private CredentialRepository credentialRepository;
-    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService; // Using your existing EmailService
+
+    @Autowired
+    private PasswordGenerator passwordGenerator;
+
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public CredentialAddResponse save(CredentialDto credentialDto) {
         Optional<User> userOptional = userRepository.findByUserEmail(credentialDto.getUserEmail());
 
-//        if (userOptional.isEmpty()) {
-//            return "User not found for the given email.";
-//        }
         if (userOptional.isEmpty()) {
             CredentialAddResponse response = new CredentialAddResponse();
             response.setMessage("User not found for the given email.");
-
             return response;
         }
 
@@ -151,9 +156,7 @@ public class CredentialImpl implements CredentialService {
         credentials.setUserPassword(credentialDto.getUserPassword());
         credentials.setUser(user);
 
-//        credentialRepository.save(credentials);
-//        return "Credentials saved successfully.";
-        CredentialAddResponse response =new CredentialAddResponse();
+        CredentialAddResponse response = new CredentialAddResponse();
         try {
             Credentials saveCredentials = credentialRepository.save(credentials);
             if (saveCredentials != null) {
@@ -166,13 +169,97 @@ public class CredentialImpl implements CredentialService {
                 response.setStatus("400");
             }
         } catch (Exception e) {
-            // Handle the exception
-            response.setMessage("Error: " + e.getMessage()); // Customize the error message as needed
-            response.setStatus("500"); // Internal server error status
+            response.setMessage("Error: " + e.getMessage());
+            response.setStatus("500");
         }
 
+        return response;
+    }
+
+    @Override
+    public ForgotPasswordResponse forgotPassword(ForgotPasswordRequest request) {
+        ForgotPasswordResponse response = new ForgotPasswordResponse();
+
+        try {
+            // Check if user exists in credentials table
+            Credentials existingCredentials = credentialRepository.findByUserEmail(request.getUserEmail());
+
+            if (existingCredentials == null) {
+                response.setMessage("User not found with the provided email address.");
+                response.setStatus("404");
+                response.setResponseCode("2001");
+                return response;
+            }
+
+            // Generate new password
+            String newPassword = passwordGenerator.generatePassword(10);
+            String encodedPassword = bCryptPasswordEncoder.encode(newPassword);
+
+            // Update the existing credentials with new password
+            existingCredentials.setUserPassword(encodedPassword);
+            credentialRepository.save(existingCredentials);
+
+            // Send email with new password using your existing EmailService
+            emailService.sendNewPassword(request.getUserEmail(), newPassword);
+
+            response.setMessage("A new password has been sent to your email address.");
+            response.setStatus("200");
+            response.setResponseCode("1000");
+
+        } catch (Exception e) {
+            response.setMessage("Failed to process password reset: " + e.getMessage());
+            response.setStatus("500");
+            response.setResponseCode("2002");
+        }
+
+        return response;
+    }
+
+    @Override
+    public UpdatePasswordResponse updatePassword(UpdatePasswordRequest request) {
+        UpdatePasswordResponse response = new UpdatePasswordResponse();
+
+        try {
+            // Find user credentials
+            Credentials existingCredentials = credentialRepository.findByUserEmail(request.getUserEmail());
+
+            if (existingCredentials == null) {
+                response.setMessage("User not found with the provided email address.");
+                response.setStatus("404");
+                response.setResponseCode("3001");
+                return response;
+            }
+
+            // Verify old password
+            boolean isOldPasswordValid = bCryptPasswordEncoder.matches(
+                    request.getOldPassword(),
+                    existingCredentials.getUserPassword()
+            );
+
+            if (!isOldPasswordValid) {
+                response.setMessage("Invalid old password provided.");
+                response.setStatus("401");
+                response.setResponseCode("3002");
+                return response;
+            }
+
+            // Encode and update new password
+            String encodedNewPassword = bCryptPasswordEncoder.encode(request.getNewPassword());
+            existingCredentials.setUserPassword(encodedNewPassword);
+            credentialRepository.save(existingCredentials);
+
+            response.setMessage("Password updated successfully.");
+            response.setStatus("200");
+            response.setResponseCode("1000");
+
+        } catch (Exception e) {
+            response.setMessage("Failed to update password: " + e.getMessage());
+            response.setStatus("500");
+            response.setResponseCode("3003");
+        }
 
         return response;
     }
 }
+
 

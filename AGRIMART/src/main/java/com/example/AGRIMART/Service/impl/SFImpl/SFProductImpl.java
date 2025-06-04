@@ -92,6 +92,8 @@ public class SFProductImpl implements SFProductService {
                 response.setMessage("Product was saved/updated successfully.");
                 response.setStatus("200");
                 response.setResponseCode("1000");
+                response.setProductID(savedProduct.getProductID()); // Return auto-generated ID
+                System.out.println("Saved Product ID: " + savedProduct.getProductID());
             } else {
                 response.setMessage("Failed to save/update product.");
                 response.setStatus("400");
@@ -236,9 +238,16 @@ public class SFProductImpl implements SFProductService {
         SeedsAndFertilizerDeleteResponse response = new SeedsAndFertilizerDeleteResponse();
 
         //calculation part
-        SFProduct SFProduct;
-        SFProduct = SFProductRepository.findByProductID(productID);
+        Optional<SFProduct> productOptional = SFProductRepository.findByProductID(productID);
 
+        if (productOptional.isEmpty()) {
+            response.setMessage("Product not found for ID: " + productID);
+            response.setStatus("404");
+            response.setResponseCode("11002");
+            return response;
+        }
+
+        SFProduct SFProduct = productOptional.get();
 
 
         try {

@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface ConsumerAddOrderRepository extends JpaRepository<ConsumerAddOrder,Integer> {
     Optional<ConsumerAddOrder> findByProductName(String ProductName);
-    ConsumerAddOrder findByOrderID(int orderID);
+//    ConsumerAddOrder findByOrderID(int orderID);
+    Optional<ConsumerAddOrder> findByOrderID(int orderID);
     List<ConsumerAddOrder> findByUser_UserID(int userID);
 }

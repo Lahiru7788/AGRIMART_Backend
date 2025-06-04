@@ -37,7 +37,7 @@ public class FarmerOfferImpl implements FarmerOfferService {
     public FarmerOfferAddResponse saveOrUpdate(FarmerOfferDto farmerOfferDto) {
         // Retrieve username from session
         String username = (String) session.getAttribute("userEmail");
-        String productID = (String) session.getAttribute("productID");
+        Integer productID = (Integer) session.getAttribute("productID");
 
         if (username == null || username.isEmpty()) {
             FarmerOfferAddResponse response = new FarmerOfferAddResponse();
@@ -47,7 +47,7 @@ public class FarmerOfferImpl implements FarmerOfferService {
         }
 
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductName(productID);
+        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductID(productID);
 
         if (userOptional.isEmpty()) {
             FarmerOfferAddResponse response = new FarmerOfferAddResponse();

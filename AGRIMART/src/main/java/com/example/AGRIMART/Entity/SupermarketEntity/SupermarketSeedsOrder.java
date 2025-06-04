@@ -60,6 +60,9 @@ public class SupermarketSeedsOrder {
     @Column(name = "is_removedFromCart")
     private boolean isRemovedFromCart;
 
+    @Column(name = "is_paid")
+    private boolean isPaid;
+
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;

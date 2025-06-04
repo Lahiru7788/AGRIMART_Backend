@@ -151,6 +151,8 @@ public class ConsumerAddOrderImpl implements ConsumerAddOrderService {
                 response.setMessage("Order was saved/updated successfully.");
                 response.setStatus("200");
                 response.setResponseCode("1000");
+                response.setOrderID(savedAddOrder.getOrderID()); // Return auto-generated ID
+                System.out.println("Saved Order ID: " + savedAddOrder.getOrderID());
             } else {
                 response.setMessage("Failed to save/update Order.");
                 response.setStatus("400");
@@ -295,17 +297,23 @@ public class ConsumerAddOrderImpl implements ConsumerAddOrderService {
     public ConsumerAddOrderDeleteResponse DeleteConsumerResponse(int orderID) {
         ConsumerAddOrderDeleteResponse response = new ConsumerAddOrderDeleteResponse();
 
-        //calculation part
-        ConsumerAddOrder consumerAddOrder;
-        consumerAddOrder = consumerAddOrderRepository.findByOrderID(orderID);
+        Optional<ConsumerAddOrder> productOptional = consumerAddOrderRepository.findByOrderID(orderID);
 
+        if (productOptional.isEmpty()) {
+            response.setMessage("Order not found for ID: " + orderID);
+            response.setStatus("404");
+            response.setResponseCode("11002");
+            return response;
+        }
+
+        ConsumerAddOrder consumerAddOrder = productOptional.get();
 
 
         try {
             consumerAddOrder.setActive(false);
             consumerAddOrderRepository.save(consumerAddOrder);
             response.setConsumerAddOrderDeleteResponse(consumerAddOrder);
-            response.setMessage("product Id : " + orderID + " item delete successfully");
+            response.setMessage("Order Id : " + orderID + " item delete successfully");
             response.setStatus("200");
             response.setResponseCode("11000");
 

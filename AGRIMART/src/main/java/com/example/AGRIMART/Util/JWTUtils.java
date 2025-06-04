@@ -1,5 +1,5 @@
 
-package com.example.AGRIMART.Utils;
+package com.example.AGRIMART.Util;
 
         import io.jsonwebtoken.*;
         import org.springframework.stereotype.Component;

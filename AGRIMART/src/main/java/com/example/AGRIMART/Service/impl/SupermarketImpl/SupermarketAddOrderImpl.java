@@ -98,6 +98,8 @@ public class SupermarketAddOrderImpl implements SupermarketAddOrderService {
                 response.setMessage("Order was saved/updated successfully.");
                 response.setStatus("200");
                 response.setResponseCode("1000");
+                response.setOrderID(savedAddOrder.getOrderID()); // Return auto-generated ID
+                System.out.println("Saved Order ID: " + savedAddOrder.getOrderID());
             } else {
                 response.setMessage("Failed to save/update Order.");
                 response.setStatus("400");
@@ -222,10 +224,16 @@ public class SupermarketAddOrderImpl implements SupermarketAddOrderService {
     public SupermarketAddOrderDeleteResponse DeleteSupermarketResponse(int orderID) {
         SupermarketAddOrderDeleteResponse response = new SupermarketAddOrderDeleteResponse();
 
-        //calculation part
-        SupermarketAddOrder supermarketAddOrder;
-        supermarketAddOrder = supermarketAddOrderRepository.findByOrderID(orderID);
+        Optional<SupermarketAddOrder> productOptional = supermarketAddOrderRepository.findByOrderID(orderID);
 
+        if (productOptional.isEmpty()) {
+            response.setMessage("Order not found for ID: " + orderID);
+            response.setStatus("404");
+            response.setResponseCode("11002");
+            return response;
+        }
+
+        SupermarketAddOrder supermarketAddOrder = productOptional.get();
 
 
         try {

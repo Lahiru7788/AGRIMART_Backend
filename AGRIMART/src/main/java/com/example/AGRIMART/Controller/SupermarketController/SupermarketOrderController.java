@@ -57,4 +57,22 @@ public class SupermarketOrderController {
         return supermarketOrderService.RejectSupermarketOrderResponse(orderID);
 
     }
+
+    @PutMapping(value = "/Supermarket-addedToCart/{orderID}/confirm")
+    public SupermarketOrderAddToCartResponse AddToCartSupermarketOrderResponse(@PathVariable int orderID){
+        return supermarketOrderService.AddToCartSupermarketOrderResponse(orderID);
+
+    }
+
+    @PutMapping(value = "/Supermarket-removedFromCart/{orderID}/confirm")
+    public SupermarketOrderRemovedFromCartResponse RemovedFromCartSupermarketOrderResponse(@PathVariable int orderID){
+        return supermarketOrderService.RemovedFromCartSupermarketOrderResponse(orderID);
+
+    }
+
+    @PutMapping(value = "/Supermarket-payment/{orderID}/confirm")
+    public SupermarketOrderPaymentResponse PaymentSupermarketOrderResponse(@PathVariable int orderID){
+        return supermarketOrderService.PaymentSupermarketOrderResponse(orderID);
+
+    }
 }

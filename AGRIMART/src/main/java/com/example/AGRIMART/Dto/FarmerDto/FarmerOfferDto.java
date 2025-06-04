@@ -14,9 +14,11 @@ import java.math.BigDecimal;
 public class FarmerOfferDto {
 
     private int offerID;
+    private int productID;
     private String offerName;
     private BigDecimal newPrice;
     private String offerDescription;
     private boolean isActive;
+    private FarmerProductDto farmerProduct;
     private UserDto user;
 }

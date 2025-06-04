@@ -46,7 +46,7 @@ public class SupermarketOfferImpl implements SupermarketOfferService {
     public SupermarketOfferAddResponse saveOrUpdate(SupermarketOfferDto supermarketOfferDto) {
         // Retrieve username from session
         String username = (String) session.getAttribute("userEmail");
-        String productName = (String) session.getAttribute("productName");
+        Integer orderID = (Integer) session.getAttribute("orderID");
 
         if (username == null || username.isEmpty()) {
             SupermarketOfferAddResponse response = new SupermarketOfferAddResponse();
@@ -56,7 +56,7 @@ public class SupermarketOfferImpl implements SupermarketOfferService {
         }
 
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<SupermarketAddOrder> orderOptional = supermarketAddOrderRepository.findByProductName(productName);
+        Optional<SupermarketAddOrder> orderOptional = supermarketAddOrderRepository.findById(orderID);
 
         if (userOptional.isEmpty()) {
             SupermarketOfferAddResponse response = new SupermarketOfferAddResponse();

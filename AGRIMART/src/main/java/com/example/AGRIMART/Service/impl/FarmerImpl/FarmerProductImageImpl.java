@@ -146,7 +146,7 @@ public class FarmerProductImageImpl implements FarmerProductImageService {
     public FProductImageAddResponse save(FarmerProductImageDto farmerProductImageDto) {
         // Retrieve username from session
         String username = (String) session.getAttribute("userEmail");
-        String productID = (String) session.getAttribute("productID");
+        Integer productID = (Integer) session.getAttribute("productID");
 
         if (username == null || username.isEmpty()) {
             FProductImageAddResponse response = new FProductImageAddResponse();
@@ -157,7 +157,7 @@ public class FarmerProductImageImpl implements FarmerProductImageService {
 
         // Find user by username
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductName(productID);
+        Optional<FarmerProduct> productOptional = farmerProductRepository.findByProductID(productID);
 
         if (userOptional.isEmpty()) {
             FProductImageAddResponse response = new FProductImageAddResponse();

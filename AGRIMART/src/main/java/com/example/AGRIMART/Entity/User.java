@@ -2,12 +2,13 @@ package com.example.AGRIMART.Entity;
 
 import com.example.AGRIMART.Dto.UserDto;
 import com.example.AGRIMART.Entity.ConsumerEntity.*;
-import com.example.AGRIMART.Entity.FarmerEntity.FarmerOffer;
-import com.example.AGRIMART.Entity.FarmerEntity.FarmerProduct;
-import com.example.AGRIMART.Entity.FarmerEntity.FarmerProductImage;
+import com.example.AGRIMART.Entity.FarmerEntity.*;
+import com.example.AGRIMART.Entity.SFEntity.SFOrder;
+import com.example.AGRIMART.Entity.SFEntity.SFOrderImage;
 import com.example.AGRIMART.Entity.SFEntity.SFProductImage;
 import com.example.AGRIMART.Entity.SFEntity.SFProduct;
 import com.example.AGRIMART.Entity.SupermarketEntity.*;
+import com.example.AGRIMART.Entity.TrainerEntity.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -112,5 +113,61 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SupermarketOrderImage> supermarketOrderImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FarmerSeedsOrderImage> farmerSeedsOrderImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FarmerSeedsOrder> farmerSeedsOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SFOrder> sfOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SFOrderImage> sfOrderImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TrainerCourse> trainerCourses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TrainerCourseImage> trainerCourseImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TrainerCourseChapters> trainerCourseChapters = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TrainerOrder> trainerOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TrainerOrderImage> trainerOrderImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserBilingDetails> userBilingDetails = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserPayment> userPayments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ConsumerCourseOrder> consumerCourseOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FarmerCourseOrder> farmerCourseOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TrainerHiring> trainerHirings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TrainerCourseOffer> trainerCourseOffers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TrainerHiringOffer> trainerHiringOffers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FarmerHire> farmerHires = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ConsumerHire> consumerHires = new ArrayList<>();
+
+
 
 }

@@ -8,6 +8,7 @@ import com.example.AGRIMART.Dto.response.ConsumerResponse.CAddOrderImageGetRespo
 import com.example.AGRIMART.Dto.response.UserProfileGetResponse;
 import com.example.AGRIMART.Entity.ConsumerEntity.CAddOrderImage;
 import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerAddOrder;
+import com.example.AGRIMART.Entity.FarmerEntity.FarmerProduct;
 import com.example.AGRIMART.Entity.User;
 import com.example.AGRIMART.Entity.UserProfile;
 import com.example.AGRIMART.Repository.ConsumerRepository.CAddOrderImageRepository;
@@ -41,7 +42,7 @@ public class CAddOrderImageImpl implements CAddOrderImageService {
     public CAddOrderImageAddResponse save(CAddOrderImageDto cAddOrderImageDto) {
         // Retrieve username from session
         String username = (String) session.getAttribute("userEmail");
-        String productName = (String) session.getAttribute("productName");
+        Integer orderID = (Integer) session.getAttribute("orderID");
 
         if (username == null || username.isEmpty()) {
             CAddOrderImageAddResponse response = new CAddOrderImageAddResponse();
@@ -58,7 +59,7 @@ public class CAddOrderImageImpl implements CAddOrderImageService {
 //        }
         // Find user by username
         Optional<User> userOptional = userRepository.findByUserEmail(username);
-        Optional<ConsumerAddOrder> addOrderOptional = consumerAddOrderRepository.findByProductName(productName);
+        Optional<ConsumerAddOrder> addOrderOptional = consumerAddOrderRepository.findById(orderID);
 
 
         if (userOptional.isEmpty()) {
