@@ -29,17 +29,17 @@ public class TrainerCourse {
     @Column(name = "coursename")
     private String courseName;
 
-    @Column(name = "course_category")
+    @Column(name = "course_category", length = 100)
     @Enumerated(EnumType.STRING)
     private TrainerAddCourseDto.CourseCategory courseCategory;
 
     @Column(name = "price")
     private BigDecimal price;
 
-    @Column(name ="drive_link")
+    @Column(name ="drive_link", length = 1000)
     private String driveLink;
 
-    @Column(name = "youtube_link")
+    @Column(name = "youtube_link", length = 1000)
     private String youtubeLink;
 
     @Column(name = "description")

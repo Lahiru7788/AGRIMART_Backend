@@ -54,7 +54,7 @@ public class UserBilingDetailsImpl implements UserBilingDetailsService {
             return response;
         }
         User user = userOptional.get();
-        List<UserBilingDetails> existingUserDetailsList = userBilingDetailsRepository.findByUser_UserID(user.getUserID());
+        List<UserBilingDetails> existingUserDetailsList = userBilingDetailsRepository.findByUserBillingDetailsID(userBilingDetailsDto.getUserBillingDetailsID());
 
         UserBilingDetails userBilingDetails;
         String actionPerformed;

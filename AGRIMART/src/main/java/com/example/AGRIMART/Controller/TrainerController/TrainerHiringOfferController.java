@@ -22,7 +22,7 @@ public class TrainerHiringOfferController {
         return trainerHiringOfferService.saveOrUpdate(trainerHiringOfferDto);
     }
 
-    @GetMapping("/viewTrainerHiringOffersByCourseId/{courseID}")
+    @GetMapping("/viewTrainerHiringOffersByHireId/{hireID}")
     public TrainerHiringOfferGetResponse findByTrainerHiring_HireID(@PathVariable("hireID") int hireID) {
         return trainerHiringOfferService.getTrainerHiringOffersByHireId(hireID);
     }

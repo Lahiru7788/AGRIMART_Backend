@@ -2,6 +2,7 @@ package com.example.AGRIMART.Controller;
 
 import com.example.AGRIMART.Dto.UserDetailsDto;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerOfferGetResponse;
+import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductGetResponse;
 import com.example.AGRIMART.Dto.response.UserDetailsAddResponse;
 import com.example.AGRIMART.Dto.response.UserDetailsGetResponse;
 import com.example.AGRIMART.Service.UserDetailsService;
@@ -31,6 +32,13 @@ public class UserDetailsController {
 
     public UserDetailsGetResponse findByUser_UserID(@PathVariable("userID") int userID)  {
         return userDetailsService.getUserDetailsByUserID(userID);
+
+    }
+
+    @GetMapping("/viewAllUserDetails")
+
+    public UserDetailsGetResponse getAllUserDetails() {
+        return userDetailsService.GetAllUserDetails();
 
     }
 }

@@ -51,7 +51,7 @@ public class UserPaymentImpl implements UserPaymentService {
             return response;
         }
         User user = userOptional.get();
-        List<UserPayment> existingUserPaymentList = userPaymentRepository.findByUser_UserID(user.getUserID());
+        List<UserPayment> existingUserPaymentList = userPaymentRepository.findByUserPaymentID(userPaymentDto.getUserPaymentID());
 
         UserPayment userPayment;
         String actionPerformed;

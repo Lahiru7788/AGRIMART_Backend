@@ -1,8 +1,9 @@
-package com.example.AGRIMART.Entity.ConsumerEntity;
+package com.example.AGRIMART.Entity.FarmerEntity;
 
-import com.example.AGRIMART.Dto.ConsumerDto.ConsumerOrderDto;
-import com.example.AGRIMART.Entity.FarmerEntity.FarmerProduct;
-import com.example.AGRIMART.Entity.SFEntity.SFProduct;
+import com.example.AGRIMART.Dto.ConsumerDto.ConsumerAddOrderDto;
+import com.example.AGRIMART.Entity.ConsumerEntity.CAddOrderImage;
+import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerAddOrder;
+import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerOffer;
 import com.example.AGRIMART.Entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,26 +19,29 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "consumerOrders")
-public class ConsumerOrder {
+@Table(name = "farmerConfirmConsumerOrder")
+public class FarmerConfirmConsumerOrder {
 
     @Id
-    @Column(name = "order_id")
+    @Column(name = "confirmOrder_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int orderID;
+    private Integer confirmOrderID;
 
     @Column(name = "product_name")
     private String productName;
 
     @Column(name = "product_category")
     @Enumerated(EnumType.STRING)
-    private ConsumerOrderDto.ProductCategory productCategory;
+    private ConsumerAddOrderDto.ProductCategory productCategory;
 
     @Column(name = "price")
     private BigDecimal price;
 
     @Column(name ="required_quantity")
     private double requiredQuantity;
+
+    @Column(name = "required_time")
+    private String requiredTime ;
 
     @Column(name = "description")
     private String description;
@@ -48,18 +52,6 @@ public class ConsumerOrder {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @Column(name = "is_confirmed")
-    private boolean isConfirmed;
-
-    @Column(name = "is_rejected")
-    private boolean isRejected;
-
-    @Column(name = "is_addedToCart")
-    private boolean isAddedToCart;
-
-    @Column(name = "is_removedFromCart")
-    private boolean isRemovedFromCart;
-
     @Column(name = "is_paid")
     private boolean isPaid;
 
@@ -68,10 +60,6 @@ public class ConsumerOrder {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
-    private FarmerProduct farmerProduct;
-
-    @OneToMany(mappedBy = "consumerOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ConsumerOrderImage> consumerOrderImages = new ArrayList<>();
-
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    private ConsumerAddOrder consumerAddOrder;
 }

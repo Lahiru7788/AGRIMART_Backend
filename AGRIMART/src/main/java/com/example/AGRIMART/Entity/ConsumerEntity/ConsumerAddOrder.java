@@ -2,6 +2,7 @@ package com.example.AGRIMART.Entity.ConsumerEntity;
 
 import com.example.AGRIMART.Dto.ConsumerDto.ConsumerAddOrderDto;
 import com.example.AGRIMART.Dto.FarmerDto.FarmerProductDto;
+import com.example.AGRIMART.Entity.FarmerEntity.FarmerConfirmConsumerOrder;
 import com.example.AGRIMART.Entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -62,5 +63,8 @@ public class ConsumerAddOrder {
 
     @OneToMany(mappedBy = "consumerAddOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConsumerOffer> consumerOffer = new ArrayList<>();
+
+    @OneToMany(mappedBy = "consumerAddOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FarmerConfirmConsumerOrder> farmerConfirmConsumerOrders = new ArrayList<>();
 
 }

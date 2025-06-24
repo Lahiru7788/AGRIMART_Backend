@@ -42,7 +42,7 @@ public class TrainerCourseWithLinksController {
         System.out.println("Course ID from DTO: " + trainerAddCourseDto.getCourseID());
         System.out.println("Course ID from Response: " + response.getCourseID());
         if ("200".equals(response.getStatus()) && response.getCourseID() != null) {
-            int courseID = response.getProductID(); // Use auto-generated ID from response
+            int courseID = response.getCourseID(); // Use auto-generated ID from response
             session.setAttribute("courseID", courseID);
             System.out.println("Course ID set in session: " + courseID);
         } else {

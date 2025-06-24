@@ -168,6 +168,15 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConsumerHire> consumerHires = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FarmerConfirmSupermarketOrder> farmerConfirmSupermarketOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FarmerConfirmConsumerOrder> farmerConfirmConsumerOrders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserOrderDetails> userOrderDetails = new ArrayList<>();
+
 
 
 }

@@ -8,5 +8,5 @@ public interface TrainerHiringService {
     TrainerHiringAddResponse saveOrUpdate(TrainerHiringDto trainerHiringDto);
     TrainerHiringGetResponse GetAllTrainerHirings();
     TrainerHiringGetResponse getTrainerHiringByUserID(int userID);
-    TrainerHiringDeleteResponse DeleteTrainerHiringResponse(int orderID);
+    TrainerHiringDeleteResponse DeleteTrainerHiringResponse(int hireID);
 }

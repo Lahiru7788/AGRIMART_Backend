@@ -91,7 +91,7 @@ public class TrainerHiringImpl implements TrainerHiringService {
                 response.setMessage("Hiring Details was saved/updated successfully.");
                 response.setStatus("200");
                 response.setResponseCode("1000");
-                response.setProductID(savedAddHiring.getHireID()); // Return auto-generated ID
+                response.setHireID(savedAddHiring.getHireID()); // Return auto-generated ID
                 System.out.println("Saved Hire ID: " + savedAddHiring.getHireID());
             } else {
                 response.setMessage("Failed to save/update Hiring Details.");

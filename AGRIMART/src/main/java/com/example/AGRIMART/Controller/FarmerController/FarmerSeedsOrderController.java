@@ -30,7 +30,7 @@ public class FarmerSeedsOrderController {
         return farmerSeedsOrderService.getFarmerSeedsOrdersByProductId(productID);
     }
 
-    @GetMapping("/viewFarmerSeedsOrdersByConsumerID/{userID}")  // Changed the path to be more specific
+    @GetMapping("/viewFarmerSeedsOrdersByFarmerID/{userID}")  // Changed the path to be more specific
     public FarmerSeedsOrderGetResponse findByUserID(@PathVariable("userID") int userID) {
         return farmerSeedsOrderService.getFarmerSeedsOrderByUserId(userID);
     }

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TrainerHiringRepository extends JpaRepository<TrainerHiring,Integer> {
-    Optional<TrainerHiring> findByName(String Name);
+    Optional<TrainerHiring> findByName(String HireID);
 //    TrainerHiring findByHireID(int hireID);
     Optional<TrainerHiring> findByHireID(int hireID);
     List<TrainerHiring> findByUser_UserID(int userID);

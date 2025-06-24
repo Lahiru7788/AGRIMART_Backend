@@ -1,9 +1,10 @@
-package com.example.AGRIMART.Entity.SupermarketEntity;
+package com.example.AGRIMART.Entity.FarmerEntity;
 
 import com.example.AGRIMART.Dto.ConsumerDto.ConsumerAddOrderDto;
 import com.example.AGRIMART.Entity.ConsumerEntity.CAddOrderImage;
+import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerAddOrder;
 import com.example.AGRIMART.Entity.ConsumerEntity.ConsumerOffer;
-import com.example.AGRIMART.Entity.FarmerEntity.FarmerConfirmSupermarketOrder;
+import com.example.AGRIMART.Entity.SupermarketEntity.SupermarketAddOrder;
 import com.example.AGRIMART.Entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,20 +20,16 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "supermarketAddOrders")
-public class SupermarketAddOrder {
+@Table(name = "farmerConfirmSupermarketOrder")
+public class FarmerConfirmSupermarketOrder {
 
     @Id
-    @Column(name = "order_id")
+    @Column(name = "confirmOrder_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer orderID;
+    private Integer confirmOrderID;
 
     @Column(name = "product_name")
     private String productName;
-
-    @Column(name = "product_category")
-    @Enumerated(EnumType.STRING)
-    private ConsumerAddOrderDto.ProductCategory productCategory;
 
     @Column(name = "price")
     private BigDecimal price;
@@ -52,20 +49,14 @@ public class SupermarketAddOrder {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @Column(name = "is_confirmed")
-    private boolean isConfirmed;
+    @Column(name = "is_paid")
+    private boolean isPaid;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "supermarketAddOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SAddOrderImage> sAddOrderImages = new ArrayList<>();
-
-    @OneToMany(mappedBy = "supermarketAddOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SupermarketOffer> supermarketOffers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "supermarketAddOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<FarmerConfirmSupermarketOrder> farmerConfirmSupermarketOrders = new ArrayList<>();
-
+    @ManyToOne
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    private SupermarketAddOrder supermarketAddOrder;
 }

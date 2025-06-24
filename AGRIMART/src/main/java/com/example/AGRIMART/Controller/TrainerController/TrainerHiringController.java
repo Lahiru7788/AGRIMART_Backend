@@ -39,7 +39,7 @@ public class TrainerHiringController {
 
     @PostMapping(path = "/trainerHiring")
     public TrainerHiringAddResponse save(@Valid @RequestBody TrainerHiringDto trainerHiringDto, HttpSession session) {
-        System.out.println("Received FarmerProductDto: " + trainerHiringDto);
+        System.out.println("Received TrainerHiringDto: " + trainerHiringDto);
         TrainerHiringAddResponse response = trainerHiringService.saveOrUpdate(trainerHiringDto);
         System.out.println("Response Status: " + response.getStatus());
         System.out.println("Hiring ID from DTO: " + trainerHiringDto.getHireID());

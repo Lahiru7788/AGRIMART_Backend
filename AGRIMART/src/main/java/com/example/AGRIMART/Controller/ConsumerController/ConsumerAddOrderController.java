@@ -3,6 +3,7 @@ package com.example.AGRIMART.Controller.ConsumerController;
 import com.example.AGRIMART.Dto.ConsumerDto.ConsumerAddOrderDto;
 import com.example.AGRIMART.Dto.FarmerDto.FarmerProductDto;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderAddResponse;
+import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderConfirmResponse;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderDeleteResponse;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderGetResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductAddResponse;
@@ -69,6 +70,12 @@ public class ConsumerAddOrderController {
     @PutMapping(value = "/consumer-order/{orderID}/delete")
     public ConsumerAddOrderDeleteResponse DeleteConsumerResponse(@PathVariable int orderID){
         return consumerAddOrderService.DeleteConsumerResponse(orderID);
+
+    }
+
+    @PutMapping(value = "/consumerConfirm-addOrder/{orderID}/confirm")
+    public ConsumerAddOrderConfirmResponse ConfirmConsumerAddOrderResponse(@PathVariable int orderID){
+        return consumerAddOrderService.ConfirmConsumerAddOrderResponse(orderID);
 
     }
 }

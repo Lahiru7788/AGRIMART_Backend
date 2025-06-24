@@ -4,6 +4,7 @@ import com.example.AGRIMART.Dto.ConsumerDto.ConsumerAddOrderDto;
 import com.example.AGRIMART.Dto.FarmerDto.FarmerProductDto;
 import com.example.AGRIMART.Dto.UserDto;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderAddResponse;
+import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderConfirmResponse;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderDeleteResponse;
 import com.example.AGRIMART.Dto.response.ConsumerResponse.ConsumerAddOrderGetResponse;
 import com.example.AGRIMART.Dto.response.FarmerResponse.FarmerProductAddResponse;
@@ -313,6 +314,41 @@ public class ConsumerAddOrderImpl implements ConsumerAddOrderService {
             consumerAddOrder.setActive(false);
             consumerAddOrderRepository.save(consumerAddOrder);
             response.setConsumerAddOrderDeleteResponse(consumerAddOrder);
+            response.setMessage("Order Id : " + orderID + " item delete successfully");
+            response.setStatus("200");
+            response.setResponseCode("11000");
+
+        }catch (Exception e){
+            response.setMessage("Error delete allocate item " + e.getMessage());
+            response.setResponseCode("11001");
+            response.setStatus("500");
+
+        }
+
+
+        return response;
+    }
+
+    @Override
+    public ConsumerAddOrderConfirmResponse ConfirmConsumerAddOrderResponse(int orderID) {
+        ConsumerAddOrderConfirmResponse response = new ConsumerAddOrderConfirmResponse();
+
+        Optional<ConsumerAddOrder> productOptional = consumerAddOrderRepository.findByOrderID(orderID);
+
+        if (productOptional.isEmpty()) {
+            response.setMessage("Order not found for ID: " + orderID);
+            response.setStatus("404");
+            response.setResponseCode("11002");
+            return response;
+        }
+
+        ConsumerAddOrder consumerAddOrder = productOptional.get();
+
+
+        try {
+            consumerAddOrder.setConfirmed(true);
+            consumerAddOrderRepository.save(consumerAddOrder);
+            response.setConsumerAddOrderConfirmResponse(consumerAddOrder);
             response.setMessage("Order Id : " + orderID + " item delete successfully");
             response.setStatus("200");
             response.setResponseCode("11000");
